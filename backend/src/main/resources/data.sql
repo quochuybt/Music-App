@@ -1,0 +1,4 @@
+-- Seed data is created by config/DataSeeder.java so BCrypt hashes are generated correctly at runtime.
+-- The sample accounts are:
+-- Admin: quochuy@gmail.com / huyle123
+-- User: user@gmail.com / 123456
