@@ -1,0 +1,52 @@
+﻿import { zodResolver } from "@hookform/resolvers/zod";
+import { Edit, Trash2 } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { z } from "zod";
+import DataTable from "../../components/admin/DataTable";
+import Badge from "../../components/common/Badge";
+import Button from "../../components/common/Button";
+import ConfirmDialog from "../../components/common/ConfirmDialog";
+import Input from "../../components/common/Input";
+import Modal from "../../components/common/Modal";
+import Select from "../../components/common/Select";
+
+const schema = z.object({ status: z.enum(["ACTIVE", "INACTIVE"]).default("ACTIVE") }).catchall(z.any());
+
+export default function AdminCrudPage({ title, resource, fields, selects = [] }) {
+  const [page, setPage] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState(null);
+  const [deleting, setDeleting] = useState(null);
+  const { register, handleSubmit, reset } = useForm({ resolver: zodResolver(schema), defaultValues: { status: "ACTIVE" } });
+  const load = useCallback(() => resource.list({ size: 100 }).then(setPage), [resource]);
+  useEffect(() => { load(); }, [load]);
+  const submit = async (values) => {
+    const payload = Object.fromEntries(Object.entries(values).map(([k, v]) => [k, v === "" ? null : v]));
+    editing ? await resource.update(editing.id, payload) : await resource.create(payload);
+    toast.success("Đã lưu");
+    setOpen(false); setEditing(null); reset({ status: "ACTIVE" }); load();
+  };
+  const remove = async () => { await resource.remove(deleting.id); toast.success("Đã xóa"); setDeleting(null); load(); };
+  const nameKey = fields[0][0];
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between"><h1 className="text-2xl font-bold">{title}</h1><Button onClick={() => setOpen(true)}>Thêm</Button></div>
+      <DataTable loading={!page} rows={page?.content || []} columns={[
+        { key: nameKey, header: "Ten" },
+        { key: "status", header: "Trạng thái", render: (r) => <Badge tone={r.status === "ACTIVE" ? "green" : "red"}>{r.status}</Badge> },
+        { key: "actions", header: "", render: (r) => <div className="flex gap-2"><Button variant="ghost" className="h-9 w-9 px-0" onClick={() => { setEditing(r); reset({ ...r, status: r.status || "ACTIVE" }); setOpen(true); }}><Edit size={16} /></Button><Button variant="danger" className="h-9 w-9 px-0" onClick={() => setDeleting(r)}><Trash2 size={16} /></Button></div> },
+      ]} />
+      <Modal open={open} title={editing ? "Sửa" : "Thêm"} onClose={() => { setOpen(false); setEditing(null); reset({ status: "ACTIVE" }); }}>
+        <form className="space-y-4" onSubmit={handleSubmit(submit)}>
+          {fields.map(([key, label]) => <Input key={key} label={label} {...register(key)} />)}
+          {selects.map(([key, label, options, textKey]) => <Select key={key} label={label} {...register(key)}><option value="">Không chọn</option>{options.map((o) => <option key={o.id} value={o.id}>{o[textKey]}</option>)}</Select>)}
+          <Select label="Trạng thái" {...register("status")}><option value="ACTIVE">ACTIVE</option><option value="INACTIVE">INACTIVE</option></Select>
+          <Button>Lưu</Button>
+        </form>
+      </Modal>
+      <ConfirmDialog open={Boolean(deleting)} message="Bạn chắc chắn muốn xóa?" onCancel={() => setDeleting(null)} onConfirm={remove} />
+    </div>
+  );
+}
