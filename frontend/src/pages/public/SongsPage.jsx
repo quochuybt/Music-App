@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { albumApi } from "../../api/albumApi";
 import { artistApi } from "../../api/artistApi";
@@ -36,8 +36,12 @@ export default function SongsPage() {
   useEffect(() => { load(0); }, [load]);
 
   return (
-    <div className="space-y-5">
-      <div><h1 className="text-2xl font-bold">Bài hát</h1><p className="text-sm text-slate-500">Tìm và nghe thư viện nhạc Việt.</p></div>
+    <div className="space-y-6">
+      <header className="app-surface rounded-2xl p-6">
+        <p className="page-kicker">Thư viện</p>
+        <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-white">Bài hát</h1>
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">Tìm và nghe thư viện nhạc Việt theo ca sĩ, album hoặc thể loại.</p>
+      </header>
       <SongFilter filters={filters} setFilters={setFilters} {...lists} />
       <SongList songs={page?.content || []} loading={loading} onAddToPlaylist={(song) => setModalSong(song)} />
       <Pagination page={page} onPage={load} />

@@ -12,6 +12,8 @@ import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class FileStorageServiceTest {
     @TempDir
@@ -56,7 +58,9 @@ class FileStorageServiceTest {
     }
 
     private FileStorageService service() {
-        FileStorageService service = new FileStorageService();
+        CloudinaryStorageService cloudinaryStorageService = mock(CloudinaryStorageService.class);
+        when(cloudinaryStorageService.isConfigured()).thenReturn(false);
+        FileStorageService service = new FileStorageService(cloudinaryStorageService);
         ReflectionTestUtils.setField(service, "uploadDir", tempDir.toString());
         ReflectionTestUtils.setField(service, "maxAudioSize", 20_971_520L);
         ReflectionTestUtils.setField(service, "maxImageSize", 5_242_880L);

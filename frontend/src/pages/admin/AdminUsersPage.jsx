@@ -14,7 +14,7 @@ export default function AdminUsersPage() {
     toast.success("Đã cập nhật người dùng");
     load();
   };
-  return <div className="space-y-4"><h1 className="text-2xl font-bold">Quản lý người dùng</h1><DataTable loading={!page} rows={page?.content || []} columns={[
+  return <div className="space-y-4"><div><p className="page-kicker">Tài khoản</p><h1 className="mt-2 text-3xl font-extrabold text-white">Quản lý người dùng</h1></div><DataTable loading={!page} rows={page?.content || []} columns={[
     { key: "fullName", header: "Họ tên" },
     { key: "email", header: "Email" },
     { key: "role", header: "Role", render: (r) => <Badge tone="violet">{r.role}</Badge> },

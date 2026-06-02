@@ -5,7 +5,7 @@ const applyTheme = (mode) => {
   document.documentElement.classList.toggle("dark", mode === "dark");
 };
 
-const initialMode = storage.getItem("theme", "light");
+const initialMode = storage.getItem("theme", "dark");
 applyTheme(initialMode);
 
 const themeSlice = createSlice({
@@ -23,7 +23,7 @@ const themeSlice = createSlice({
       applyTheme(state.mode);
     },
     loadThemeFromStorage(state) {
-      state.mode = storage.getItem("theme", "light");
+      state.mode = storage.getItem("theme", "dark");
       applyTheme(state.mode);
     },
   },

@@ -3,7 +3,7 @@ import Select from "../common/Select";
 
 export default function SongFilter({ filters, setFilters, artists = [], albums = [], genres = [] }) {
   return (
-    <div className="grid gap-3 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900 md:grid-cols-4">
+    <div className="app-surface grid gap-3 rounded-2xl p-4 md:grid-cols-4">
       <Input placeholder="Tìm bài hát, ca sĩ..." value={filters.keyword} onChange={(e) => setFilters({ ...filters, keyword: e.target.value })} />
       <Select value={filters.artistId} onChange={(e) => setFilters({ ...filters, artistId: e.target.value })}>
         <option value="">Tất cả ca sĩ</option>

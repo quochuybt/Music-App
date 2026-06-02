@@ -16,6 +16,8 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class FileStorageService {
+    private final CloudinaryStorageService cloudinaryStorageService;
+
     @Value("${app.upload-dir:uploads}")
     private String uploadDir;
     @Value("${app.upload.max-audio-size:20971520}")
@@ -42,6 +44,10 @@ public class FileStorageService {
         validateContentType(contentType, type);
         validateExtension(extension, type);
         validateSignature(file, type);
+
+        if (cloudinaryStorageService.isConfigured()) {
+            return cloudinaryStorageService.upload(file, type, extension);
+        }
 
         try {
             Path folder = Path.of(uploadDir, type).toAbsolutePath().normalize();

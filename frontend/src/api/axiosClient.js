@@ -12,6 +12,13 @@ export const API_ORIGIN = (import.meta.env.VITE_API_BASE_URL || "http://localhos
 axiosClient.interceptors.request.use((config) => {
   const token = storage.getItem("token");
   if (token) config.headers.Authorization = `Bearer ${token}`;
+  if (config.data instanceof FormData) {
+    if (typeof config.headers.delete === "function") {
+      config.headers.delete("Content-Type");
+    } else {
+      delete config.headers["Content-Type"];
+    }
+  }
   return config;
 });
 

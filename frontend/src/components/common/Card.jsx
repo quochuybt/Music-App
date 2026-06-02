@@ -1,4 +1,5 @@
-﻿import clsx from "clsx";
+import clsx from "clsx";
+
 export default function Card({ children, className }) {
-  return <div className={clsx("rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900", className)}>{children}</div>;
+  return <div className={clsx("app-surface rounded-2xl p-5", className)}>{children}</div>;
 }

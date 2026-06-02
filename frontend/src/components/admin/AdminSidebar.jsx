@@ -1,4 +1,4 @@
-﻿import { Album, BarChart3, Home, Mic2, Music2, Tags, Users } from "lucide-react";
+import { Album, BarChart3, Home, Mic2, Music2, Radio, Tags, Users } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import clsx from "clsx";
 
@@ -14,11 +14,17 @@ const links = [
 
 export default function AdminSidebar() {
   return (
-    <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 border-r border-slate-800 bg-slate-950 p-4 text-slate-100 lg:block">
-      <h1 className="mb-8 px-2 text-lg font-bold">VietMusic Admin</h1>
+    <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 border-r border-white/10 bg-[#070a0f]/95 p-4 text-slate-100 lg:block">
+      <div className="mb-8 flex items-center gap-3 rounded-2xl bg-white/[0.04] p-3 ring-1 ring-white/10">
+        <div className="grid h-11 w-11 place-items-center rounded-2xl bg-emerald-400 text-slate-950"><Radio size={22} /></div>
+        <div>
+          <h1 className="font-bold">VietMusic Admin</h1>
+          <p className="text-xs text-slate-400">Quản trị nội dung</p>
+        </div>
+      </div>
       <nav className="space-y-1">
         {links.map(({ to, label, icon: Icon }) => (
-          <NavLink key={to} to={to} className={({ isActive }) => clsx("flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium", isActive ? "bg-violet-600 text-white" : "text-slate-300 hover:bg-slate-900")}>
+          <NavLink key={to} to={to} className={({ isActive }) => clsx("flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition duration-300", isActive ? "bg-emerald-400 text-slate-950" : "text-slate-400 hover:bg-white/[0.06] hover:text-white")}>
             <Icon size={18} /> {label}
           </NavLink>
         ))}

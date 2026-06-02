@@ -14,12 +14,12 @@ export const adminApi = {
   uploadAudio: (file) => {
     const formData = new FormData();
     formData.append("file", file);
-    return unwrap(axiosClient.post("/admin/uploads/audio", formData, { headers: { "Content-Type": "multipart/form-data" } }));
+    return unwrap(axiosClient.post("/admin/uploads/audio", formData));
   },
   uploadImage: (file) => {
     const formData = new FormData();
     formData.append("file", file);
-    return unwrap(axiosClient.post("/admin/uploads/image", formData, { headers: { "Content-Type": "multipart/form-data" } }));
+    return unwrap(axiosClient.post("/admin/uploads/image", formData));
   },
   songs: crud("songs"),
   artists: crud("artists"),

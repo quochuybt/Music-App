@@ -10,13 +10,14 @@ import java.util.Optional;
 public interface SongRepository extends JpaRepository<Song, Long> {
     @Query("""
             select s from Song s
+            left join s.album a
             where (:status is null or s.status = :status)
               and (:artistId is null or s.artist.id = :artistId)
-              and (:albumId is null or s.album.id = :albumId)
+              and (:albumId is null or a.id = :albumId)
               and (:genreId is null or s.genre.id = :genreId)
               and (:keyword is null or lower(s.title) like lower(concat('%', :keyword, '%'))
                    or lower(s.artist.name) like lower(concat('%', :keyword, '%'))
-                   or lower(coalesce(s.album.title, '')) like lower(concat('%', :keyword, '%')))
+                   or lower(coalesce(a.title, '')) like lower(concat('%', :keyword, '%')))
             """)
     Page<Song> search(@Param("status") CommonStatus status,
                       @Param("artistId") Long artistId,

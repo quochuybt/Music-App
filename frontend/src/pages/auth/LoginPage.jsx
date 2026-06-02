@@ -1,5 +1,5 @@
-﻿import { zodResolver } from "@hookform/resolvers/zod";
-import { Music2 } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Radio } from "lucide-react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -25,18 +25,18 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="grid min-h-screen place-items-center bg-slate-50 p-4 dark:bg-slate-950">
-      <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md rounded-lg border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+    <div className="grid min-h-[100dvh] place-items-center p-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="app-surface w-full max-w-md rounded-[2rem] p-6">
         <div className="mb-6 flex items-center gap-3">
-          <div className="grid h-11 w-11 place-items-center rounded-md bg-violet-600 text-white"><Music2 /></div>
-          <div><h1 className="text-xl font-bold">Đăng nhập</h1><p className="text-sm text-slate-500">Trở lại VietMusic</p></div>
+          <div className="grid h-12 w-12 place-items-center rounded-2xl bg-emerald-400 text-slate-950"><Radio /></div>
+          <div><h1 className="text-xl font-bold text-white">Đăng nhập</h1><p className="text-sm text-slate-400">Trở lại VietMusic</p></div>
         </div>
         <div className="space-y-4">
           <Input label="Email" {...register("email")} error={errors.email?.message} />
           <Input label="Mật khẩu" type="password" {...register("password")} error={errors.password?.message} />
           <Button className="w-full" disabled={loading}>{loading ? "Đang xử lý..." : "Đăng nhập"}</Button>
         </div>
-        <p className="mt-5 text-center text-sm text-slate-500">Chưa có tài khoản? <Link className="font-semibold text-violet-600" to="/register">Đăng ký</Link></p>
+        <p className="mt-5 text-center text-sm text-slate-400">Chưa có tài khoản? <Link className="font-semibold text-emerald-300" to="/register">Đăng ký</Link></p>
       </form>
     </div>
   );

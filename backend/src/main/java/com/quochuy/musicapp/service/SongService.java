@@ -18,13 +18,16 @@ public class SongService {
     private final ArtistService artistService;
     private final AlbumService albumService;
     private final GenreService genreService;
+    private final FavoriteRepository favoriteRepository;
+    private final PlaylistSongRepository playlistSongRepository;
+    private final ListeningHistoryRepository listeningHistoryRepository;
 
     @Transactional(readOnly = true)
     public Page<SongResponse> publicSearch(Long genreId, Long artistId, Long albumId, String keyword, Pageable pageable) {
-        return songRepository.search(CommonStatus.ACTIVE, artistId, albumId, genreId, blankToNull(keyword), pageable).map(SongMapper::toResponse);
+        return songRepository.search(CommonStatus.ACTIVE, artistId, albumId, genreId, blankToNull(keyword), newestFirst(pageable)).map(SongMapper::toResponse);
     }
     @Transactional(readOnly = true)
-    public Page<SongResponse> adminList(Pageable pageable) { return songRepository.findAll(pageable).map(SongMapper::toResponse); }
+    public Page<SongResponse> adminList(Pageable pageable) { return songRepository.findAll(newestFirst(pageable)).map(SongMapper::toResponse); }
     @Transactional(readOnly = true)
     public Page<SongResponse> byArtist(Long id, Pageable pageable) { return songRepository.findByArtistIdAndStatus(id, CommonStatus.ACTIVE, pageable).map(SongMapper::toResponse); }
     @Transactional(readOnly = true)
@@ -42,7 +45,13 @@ public class SongService {
     @Transactional
     public SongResponse update(Long id, SongRequest request) { return SongMapper.toResponse(songRepository.save(apply(getEntity(id), request))); }
     @Transactional
-    public void delete(Long id) { songRepository.delete(getEntity(id)); }
+    public void delete(Long id) {
+        Song song = getEntity(id);
+        favoriteRepository.deleteAllBySongId(id);
+        playlistSongRepository.deleteAllBySongId(id);
+        listeningHistoryRepository.deleteAllBySongId(id);
+        songRepository.delete(song);
+    }
     @Transactional
     public SongResponse updateStatus(Long id, CommonStatus status) { Song song = getEntity(id); song.setStatus(status); return SongMapper.toResponse(songRepository.save(song)); }
     @Transactional
@@ -57,4 +66,9 @@ public class SongService {
         return song;
     }
     private String blankToNull(String value) { return value == null || value.isBlank() ? null : value; }
+
+    private Pageable newestFirst(Pageable pageable) {
+        if (pageable.getSort().isSorted()) return pageable;
+        return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "createdAt"));
+    }
 }

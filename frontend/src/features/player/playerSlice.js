@@ -1,9 +1,17 @@
-﻿import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { historyApi } from "../../api/historyApi";
+import { API_ORIGIN } from "../../api/axiosClient";
 import { storage } from "../../utils/storage";
 
+const resolveMediaUrl = (url) => {
+  if (!url) return "";
+  if (/^https?:\/\//i.test(url)) return url;
+  return `${API_ORIGIN}${url.startsWith("/") ? "" : "/"}${url}`;
+};
+
+const normalizeSong = (song) => song ? { ...song, audioUrl: resolveMediaUrl(song.audioUrl), imageUrl: resolveMediaUrl(song.imageUrl) } : null;
+
 export const playSongWithHistory = createAsyncThunk("player/playSongWithHistory", async (song, { getState }) => {
-  // Playback is simulated in Redux; logged-in users still write listening history.
   if (getState().auth.isAuthenticated) {
     historyApi.add(song.id).catch(() => {});
   }
@@ -22,15 +30,18 @@ const playerSlice = createSlice({
   },
   reducers: {
     setCurrentSong(state, action) {
-      state.currentSong = action.payload;
+      state.currentSong = normalizeSong(action.payload);
       state.progress = 0;
     },
     playSong(state, action) {
-      state.currentSong = action.payload;
+      state.currentSong = normalizeSong(action.payload);
       state.isPlaying = true;
       state.progress = 0;
     },
     pauseSong(state) {
+      state.isPlaying = false;
+    },
+    audioFailed(state) {
       state.isPlaying = false;
     },
     togglePlay(state) {
@@ -39,14 +50,14 @@ const playerSlice = createSlice({
     nextSong(state) {
       if (!state.queue.length) return;
       state.currentIndex = (state.currentIndex + 1) % state.queue.length;
-      state.currentSong = state.queue[state.currentIndex];
+      state.currentSong = normalizeSong(state.queue[state.currentIndex]);
       state.isPlaying = true;
       state.progress = 0;
     },
     previousSong(state) {
       if (!state.queue.length) return;
       state.currentIndex = state.currentIndex === 0 ? state.queue.length - 1 : state.currentIndex - 1;
-      state.currentSong = state.queue[state.currentIndex];
+      state.currentSong = normalizeSong(state.queue[state.currentIndex]);
       state.isPlaying = true;
       state.progress = 0;
     },
@@ -69,13 +80,13 @@ const playerSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(playSongWithHistory.fulfilled, (state, action) => {
-      state.currentSong = action.payload;
+      state.currentSong = normalizeSong(action.payload);
       state.isPlaying = true;
       state.progress = 0;
     });
   },
 });
 
-export const { setCurrentSong, playSong, pauseSong, togglePlay, nextSong, previousSong, setVolume, setProgress, setQueue, clearPlayer } =
+export const { setCurrentSong, playSong, pauseSong, audioFailed, togglePlay, nextSong, previousSong, setVolume, setProgress, setQueue, clearPlayer } =
   playerSlice.actions;
 export default playerSlice.reducer;

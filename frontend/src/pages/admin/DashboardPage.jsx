@@ -1,4 +1,4 @@
-﻿import { Album, ListMusic, Mic2, Music2, Tags, Users } from "lucide-react";
+import { Album, ListMusic, Mic2, Music2, Tags, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { adminApi } from "../../api/adminApi";
 import Card from "../../components/common/Card";
@@ -19,11 +19,26 @@ export default function DashboardPage() {
   ];
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Dashboard</h1>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{cards.map(([label, value, Icon]) => <Card key={label}><div className="flex items-center justify-between"><div><p className="text-sm text-slate-500">{label}</p><p className="mt-2 text-3xl font-bold">{formatCount(value)}</p></div><Icon className="text-violet-500" /></div></Card>)}</div>
+      <header>
+        <p className="page-kicker">Tổng quan</p>
+        <h1 className="mt-2 text-3xl font-extrabold text-white">Dashboard</h1>
+      </header>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {cards.map(([label, value, Icon]) => (
+          <Card key={label}>
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="text-sm text-slate-400">{label}</p>
+                <p className="tabular mt-2 text-3xl font-bold text-white">{formatCount(value)}</p>
+              </div>
+              <div className="grid h-12 w-12 place-items-center rounded-2xl bg-emerald-400/12 text-emerald-200"><Icon /></div>
+            </div>
+          </Card>
+        ))}
+      </div>
       <div className="grid gap-4 lg:grid-cols-2">
-        <Card><p className="text-sm text-slate-500">Yêu thích nhiều nhất</p><h2 className="mt-2 text-xl font-bold">{stats.mostFavoriteSong?.title || "Chưa có dữ liệu"}</h2></Card>
-        <Card><p className="text-sm text-slate-500">Nghe nhiều nhất</p><h2 className="mt-2 text-xl font-bold">{stats.mostPlayedSong?.title || "Chưa có dữ liệu"}</h2></Card>
+        <Card><p className="text-sm text-slate-400">Yêu thích nhiều nhất</p><h2 className="mt-2 text-xl font-bold text-white">{stats.mostFavoriteSong?.title || "Chưa có dữ liệu"}</h2></Card>
+        <Card><p className="text-sm text-slate-400">Nghe nhiều nhất</p><h2 className="mt-2 text-xl font-bold text-white">{stats.mostPlayedSong?.title || "Chưa có dữ liệu"}</h2></Card>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-﻿import { Album, Heart, History, Home, ListMusic, Mic2, Music2 } from "lucide-react";
+import { Album, Heart, History, Home, ListMusic, Mic2, Music2, Radio } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import clsx from "clsx";
 
@@ -14,17 +14,17 @@ const links = [
 
 export default function Sidebar({ open, onClose }) {
   return (
-    <aside className={clsx("fixed inset-y-0 left-0 z-40 w-64 border-r border-slate-200 bg-white p-4 transition dark:border-slate-800 dark:bg-slate-950 lg:translate-x-0", open ? "translate-x-0" : "-translate-x-full")}>
-      <div className="mb-8 flex items-center gap-2 px-2">
-        <div className="grid h-10 w-10 place-items-center rounded-md bg-violet-600 text-white"><Music2 size={22} /></div>
+    <aside className={clsx("fixed inset-y-0 left-0 z-40 w-64 border-r border-white/10 bg-[#070a0f]/95 p-4 text-slate-100 shadow-[18px_0_70px_rgb(0_0_0/0.35)] transition duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] lg:translate-x-0", open ? "translate-x-0" : "-translate-x-full")}>
+      <div className="mb-8 flex items-center gap-3 rounded-2xl bg-white/[0.04] p-3 ring-1 ring-white/10">
+        <div className="grid h-11 w-11 place-items-center rounded-2xl bg-emerald-400 text-slate-950 shadow-[0_16px_40px_rgb(16_185_129/0.28)]"><Radio size={22} /></div>
         <div>
-          <h1 className="font-bold">VietMusic</h1>
-          <p className="text-xs text-slate-500">Vietnam sounds</p>
+          <h1 className="font-bold tracking-wide">VietMusic</h1>
+          <p className="text-xs text-slate-400">Nhạc Việt mỗi ngày</p>
         </div>
       </div>
       <nav className="space-y-1">
         {links.map(({ to, label, icon: Icon }) => (
-          <NavLink key={to} to={to} onClick={onClose} className={({ isActive }) => clsx("flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition", isActive ? "bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-200" : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-900")}>
+          <NavLink key={to} to={to} onClick={onClose} className={({ isActive }) => clsx("flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition duration-300", isActive ? "bg-emerald-400 text-slate-950 shadow-[0_12px_28px_rgb(16_185_129/0.22)]" : "text-slate-400 hover:bg-white/[0.06] hover:text-white")}>
             <Icon size={18} /> {label}
           </NavLink>
         ))}

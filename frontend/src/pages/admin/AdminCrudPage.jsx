@@ -32,11 +32,11 @@ export default function AdminCrudPage({ title, resource, fields, selects = [] })
   const nameKey = fields[0][0];
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between"><h1 className="text-2xl font-bold">{title}</h1><Button onClick={() => setOpen(true)}>Thêm</Button></div>
+      <div className="flex items-end justify-between gap-4"><div><p className="page-kicker">Quản trị</p><h1 className="mt-2 text-3xl font-extrabold text-white">{title}</h1></div><Button onClick={() => setOpen(true)}>Thêm</Button></div>
       <DataTable loading={!page} rows={page?.content || []} columns={[
-        { key: nameKey, header: "Ten" },
+        { key: nameKey, header: "Tên" },
         { key: "status", header: "Trạng thái", render: (r) => <Badge tone={r.status === "ACTIVE" ? "green" : "red"}>{r.status}</Badge> },
-        { key: "actions", header: "", render: (r) => <div className="flex gap-2"><Button variant="ghost" className="h-9 w-9 px-0" onClick={() => { setEditing(r); reset({ ...r, status: r.status || "ACTIVE" }); setOpen(true); }}><Edit size={16} /></Button><Button variant="danger" className="h-9 w-9 px-0" onClick={() => setDeleting(r)}><Trash2 size={16} /></Button></div> },
+        { key: "actions", header: "", render: (r) => <div className="flex justify-end gap-2"><Button variant="secondary" className="h-11 w-11 px-0" title="Sửa" onClick={() => { setEditing(r); reset({ ...r, status: r.status || "ACTIVE" }); setOpen(true); }}><Edit size={20} /></Button><Button variant="dangerGhost" className="h-11 w-11 px-0" title="Xóa" onClick={() => setDeleting(r)}><Trash2 size={20} /></Button></div> },
       ]} />
       <Modal open={open} title={editing ? "Sửa" : "Thêm"} onClose={() => { setOpen(false); setEditing(null); reset({ status: "ACTIVE" }); }}>
         <form className="space-y-4" onSubmit={handleSubmit(submit)}>

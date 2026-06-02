@@ -21,7 +21,7 @@ export default function AddToPlaylistModal({ open, onClose, song, playlists = []
             {playlist.name}
           </Button>
         ))}
-        {!playlists.length && <p className="text-sm text-slate-500">Bạn chưa có playlist.</p>}
+        {!playlists.length && <p className="text-sm text-slate-400">Bạn chưa có playlist.</p>}
       </div>
     </Modal>
   );
