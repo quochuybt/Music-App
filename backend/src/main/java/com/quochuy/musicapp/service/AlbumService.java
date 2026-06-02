@@ -10,24 +10,34 @@ import com.quochuy.musicapp.repository.AlbumRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service @RequiredArgsConstructor
 public class AlbumService {
     private final AlbumRepository albumRepository;
     private final ArtistService artistService;
+    @Transactional(readOnly = true)
     public Page<AlbumResponse> publicList(Pageable pageable) { return albumRepository.findByStatus(CommonStatus.ACTIVE, pageable).map(AlbumMapper::toResponse); }
+    @Transactional(readOnly = true)
     public Page<AlbumResponse> adminList(Pageable pageable) { return albumRepository.findAll(pageable).map(AlbumMapper::toResponse); }
+    @Transactional(readOnly = true)
     public Page<AlbumResponse> byArtist(Long artistId, Pageable pageable) { return albumRepository.findByArtistIdAndStatus(artistId, CommonStatus.ACTIVE, pageable).map(AlbumMapper::toResponse); }
     public Album getEntity(Long id) { return albumRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Album not found")); }
+    @Transactional(readOnly = true)
     public AlbumResponse getPublic(Long id) {
         Album album = getEntity(id);
         if (album.getStatus() != CommonStatus.ACTIVE) throw new ResourceNotFoundException("Album not found");
         return AlbumMapper.toResponse(album);
     }
+    @Transactional(readOnly = true)
     public AlbumResponse getAdmin(Long id) { return AlbumMapper.toResponse(getEntity(id)); }
+    @Transactional
     public AlbumResponse create(AlbumRequest request) { return AlbumMapper.toResponse(albumRepository.save(apply(Album.builder().build(), request))); }
+    @Transactional
     public AlbumResponse update(Long id, AlbumRequest request) { return AlbumMapper.toResponse(albumRepository.save(apply(getEntity(id), request))); }
+    @Transactional
     public void delete(Long id) { albumRepository.delete(getEntity(id)); }
+    @Transactional
     public AlbumResponse updateStatus(Long id, CommonStatus status) { Album album = getEntity(id); album.setStatus(status); return AlbumMapper.toResponse(albumRepository.save(album)); }
     private Album apply(Album album, AlbumRequest request) {
         album.setTitle(request.getTitle()); album.setImageUrl(request.getImageUrl()); album.setReleaseYear(request.getReleaseYear());

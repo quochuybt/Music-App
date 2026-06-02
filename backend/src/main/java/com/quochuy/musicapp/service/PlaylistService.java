@@ -19,15 +19,19 @@ public class PlaylistService {
     private final SongService songService;
     private final CurrentUserService currentUserService;
 
+    @Transactional(readOnly = true)
     public List<PlaylistResponse> mine() {
         Long userId = currentUserService.get().getId();
         return playlistRepository.findByUserIdOrderByCreatedAtDesc(userId).stream().map(this::toResponse).toList();
     }
+    @Transactional(readOnly = true)
     public PlaylistResponse get(Long id) { return toResponse(myPlaylist(id)); }
+    @Transactional
     public PlaylistResponse create(PlaylistRequest request) {
         Playlist playlist = Playlist.builder().name(request.getName()).description(request.getDescription()).user(currentUserService.get()).build();
         return toResponse(playlistRepository.save(playlist));
     }
+    @Transactional
     public PlaylistResponse update(Long id, PlaylistRequest request) {
         Playlist playlist = myPlaylist(id);
         playlist.setName(request.getName()); playlist.setDescription(request.getDescription());
@@ -39,10 +43,11 @@ public class PlaylistService {
         playlistSongRepository.deleteByPlaylistId(playlist.getId());
         playlistRepository.delete(playlist);
     }
+    @Transactional
     public PlaylistResponse addSong(Long playlistId, Long songId) {
         Playlist playlist = myPlaylist(playlistId);
         if (playlistSongRepository.existsByPlaylistIdAndSongId(playlistId, songId)) throw new BadRequestException("Song already exists in playlist");
-        Song song = songService.getEntity(songId);
+        Song song = songService.getActiveEntity(songId);
         playlistSongRepository.save(PlaylistSong.builder().id(new PlaylistSongId(playlistId, songId)).playlist(playlist).song(song).build());
         return toResponse(playlist);
     }

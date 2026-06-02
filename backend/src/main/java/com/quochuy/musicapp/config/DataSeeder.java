@@ -4,13 +4,16 @@ import com.quochuy.musicapp.entity.*;
 import com.quochuy.musicapp.enums.*;
 import com.quochuy.musicapp.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
+@ConditionalOnProperty(name = "app.seed.enabled", havingValue = "true")
 @RequiredArgsConstructor
 public class DataSeeder implements CommandLineRunner {
     private final UserRepository userRepository;
@@ -19,17 +22,24 @@ public class DataSeeder implements CommandLineRunner {
     private final AlbumRepository albumRepository;
     private final SongRepository songRepository;
     private final PasswordEncoder passwordEncoder;
+    @Value("${app.seed.admin-password}")
+    private String adminPassword;
+    @Value("${app.seed.user-password}")
+    private String userPassword;
 
     @Override
     public void run(String... args) {
         if (userRepository.count() > 0) return;
+        if (adminPassword == null || adminPassword.isBlank() || userPassword == null || userPassword.isBlank()) {
+            throw new IllegalStateException("Seed passwords must be configured when app.seed.enabled=true");
+        }
 
         userRepository.save(User.builder().fullName("Quoc Huy").email("quochuy@gmail.com")
-                .password(passwordEncoder.encode("huyle123")).role(Role.ADMIN).status(UserStatus.ACTIVE).build());
+                .password(passwordEncoder.encode(adminPassword)).role(Role.ADMIN).status(UserStatus.ACTIVE).build());
         userRepository.save(User.builder().fullName("User Demo").email("user@gmail.com")
-                .password(passwordEncoder.encode("123456")).role(Role.USER).status(UserStatus.ACTIVE).build());
+                .password(passwordEncoder.encode(userPassword)).role(Role.USER).status(UserStatus.ACTIVE).build());
         userRepository.save(User.builder().fullName("Listener Demo").email("listener@gmail.com")
-                .password(passwordEncoder.encode("123456")).role(Role.USER).status(UserStatus.ACTIVE).build());
+                .password(passwordEncoder.encode(userPassword)).role(Role.USER).status(UserStatus.ACTIVE).build());
 
         List<Artist> artists = artistRepository.saveAll(List.of(
                 Artist.builder().name("Hoang Dung").imageUrl(img(1)).bio("Vietnamese pop artist").status(CommonStatus.ACTIVE).build(),

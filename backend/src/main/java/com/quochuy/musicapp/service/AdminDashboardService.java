@@ -5,6 +5,7 @@ import com.quochuy.musicapp.mapper.SongMapper;
 import com.quochuy.musicapp.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service @RequiredArgsConstructor
 public class AdminDashboardService {
@@ -16,6 +17,7 @@ public class AdminDashboardService {
     private final PlaylistRepository playlistRepository;
     private final FavoriteRepository favoriteRepository;
 
+    @Transactional(readOnly = true)
     public DashboardStatsResponse stats() {
         return DashboardStatsResponse.builder()
                 .totalSongs(songRepository.count())

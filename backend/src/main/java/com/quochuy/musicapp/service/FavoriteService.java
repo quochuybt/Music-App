@@ -17,18 +17,21 @@ public class FavoriteService {
     private final SongService songService;
     private final CurrentUserService currentUserService;
 
+    @Transactional(readOnly = true)
     public List<SongResponse> mine() {
         return favoriteRepository.findByUserIdOrderByCreatedAtDesc(currentUserService.get().getId()).stream()
                 .map(Favorite::getSong).map(SongMapper::toResponse).toList();
     }
+    @Transactional
     public SongResponse add(Long songId) {
         User user = currentUserService.get();
         if (favoriteRepository.existsByUserIdAndSongId(user.getId(), songId)) throw new BadRequestException("Song already favorited");
-        Song song = songService.getEntity(songId);
+        Song song = songService.getActiveEntity(songId);
         favoriteRepository.save(Favorite.builder().id(new FavoriteId(user.getId(), songId)).user(user).song(song).build());
         return SongMapper.toResponse(song);
     }
     @Transactional
     public void remove(Long songId) { favoriteRepository.deleteByUserIdAndSongId(currentUserService.get().getId(), songId); }
+    @Transactional(readOnly = true)
     public boolean check(Long songId) { return favoriteRepository.existsByUserIdAndSongId(currentUserService.get().getId(), songId); }
 }

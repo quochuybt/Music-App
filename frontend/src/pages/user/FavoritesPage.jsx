@@ -10,5 +10,5 @@ export default function FavoritesPage() {
   useEffect(() => { load(); }, []);
   const remove = async (song) => { await favoriteApi.remove(song.id); toast.success("Đã bỏ yêu thích"); load(); };
   if (!songs) return <Loading />;
-  return <div><h1 className="mb-5 text-2xl font-bold">Bài hát yêu thích</h1><SongList songs={songs} onRemove={remove} /></div>;
+  return <div><h1 className="mb-5 text-2xl font-bold">Bài hát yêu thích</h1><SongList songs={songs} onRemove={remove} showFavorite={false} /></div>;
 }

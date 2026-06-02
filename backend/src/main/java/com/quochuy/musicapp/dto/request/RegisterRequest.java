@@ -9,8 +9,10 @@ public class RegisterRequest {
     private String fullName;
     @Email @NotBlank
     private String email;
+    @NotBlank
     @Size(min = 6)
     private String password;
+    @NotBlank
     @Size(min = 6)
     private String confirmPassword;
 }

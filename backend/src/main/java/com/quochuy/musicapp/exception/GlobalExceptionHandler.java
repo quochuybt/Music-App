@@ -1,13 +1,19 @@
 package com.quochuy.musicapp.exception;
 
 import com.quochuy.musicapp.dto.response.ApiResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
@@ -30,6 +36,21 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.error("Access denied"));
     }
 
+    @ExceptionHandler({BadCredentialsException.class, AuthenticationCredentialsNotFoundException.class})
+    public ResponseEntity<ApiResponse<Void>> authentication(Exception ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("Invalid email or password"));
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ApiResponse<Void>> typeMismatch(MethodArgumentTypeMismatchException ex) {
+        return ResponseEntity.badRequest().body(ApiResponse.error("Invalid value for " + ex.getName()));
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiResponse<Void>> dataIntegrity(DataIntegrityViolationException ex) {
+        return ResponseEntity.badRequest().body(ApiResponse.error("Request violates data constraints"));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> validation(MethodArgumentNotValidException ex) {
         String message = ex.getBindingResult().getFieldErrors().stream()
@@ -40,6 +61,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> general(Exception ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(ex.getMessage()));
+        log.error("Unhandled application error", ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error("Internal server error"));
     }
 }

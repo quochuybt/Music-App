@@ -10,6 +10,7 @@ import com.quochuy.musicapp.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service @RequiredArgsConstructor
 public class SongService {
@@ -18,20 +19,33 @@ public class SongService {
     private final AlbumService albumService;
     private final GenreService genreService;
 
+    @Transactional(readOnly = true)
     public Page<SongResponse> publicSearch(Long genreId, Long artistId, Long albumId, String keyword, Pageable pageable) {
         return songRepository.search(CommonStatus.ACTIVE, artistId, albumId, genreId, blankToNull(keyword), pageable).map(SongMapper::toResponse);
     }
+    @Transactional(readOnly = true)
     public Page<SongResponse> adminList(Pageable pageable) { return songRepository.findAll(pageable).map(SongMapper::toResponse); }
+    @Transactional(readOnly = true)
     public Page<SongResponse> byArtist(Long id, Pageable pageable) { return songRepository.findByArtistIdAndStatus(id, CommonStatus.ACTIVE, pageable).map(SongMapper::toResponse); }
+    @Transactional(readOnly = true)
     public Page<SongResponse> byAlbum(Long id, Pageable pageable) { return songRepository.findByAlbumIdAndStatus(id, CommonStatus.ACTIVE, pageable).map(SongMapper::toResponse); }
+    @Transactional(readOnly = true)
     public Page<SongResponse> byGenre(Long id, Pageable pageable) { return songRepository.findByGenreIdAndStatus(id, CommonStatus.ACTIVE, pageable).map(SongMapper::toResponse); }
     public Song getEntity(Long id) { return songRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Song not found")); }
+    public Song getActiveEntity(Long id) { return songRepository.findByIdAndStatus(id, CommonStatus.ACTIVE).orElseThrow(() -> new ResourceNotFoundException("Song not found")); }
+    @Transactional(readOnly = true)
     public SongResponse getPublic(Long id) { return SongMapper.toResponse(songRepository.findByIdAndStatus(id, CommonStatus.ACTIVE).orElseThrow(() -> new ResourceNotFoundException("Song not found"))); }
+    @Transactional(readOnly = true)
     public SongResponse getAdmin(Long id) { return SongMapper.toResponse(getEntity(id)); }
+    @Transactional
     public SongResponse create(SongRequest request) { return SongMapper.toResponse(songRepository.save(apply(Song.builder().playCount(0L).build(), request))); }
+    @Transactional
     public SongResponse update(Long id, SongRequest request) { return SongMapper.toResponse(songRepository.save(apply(getEntity(id), request))); }
+    @Transactional
     public void delete(Long id) { songRepository.delete(getEntity(id)); }
+    @Transactional
     public SongResponse updateStatus(Long id, CommonStatus status) { Song song = getEntity(id); song.setStatus(status); return SongMapper.toResponse(songRepository.save(song)); }
+    @Transactional
     public void incrementPlayCount(Song song) { song.setPlayCount(song.getPlayCount() + 1); songRepository.save(song); }
     private Song apply(Song song, SongRequest request) {
         song.setTitle(request.getTitle()); song.setImageUrl(request.getImageUrl()); song.setAudioUrl(request.getAudioUrl());

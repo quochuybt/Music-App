@@ -8,7 +8,7 @@ Create MariaDB database:
 CREATE DATABASE music_app CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-Update credentials in `src/main/resources/application.properties` if your local MariaDB user/password differs.
+Use the variables listed in `.env.example` for your shell, IDE run configuration, or deployment environment.
 
 ## Run
 
@@ -26,10 +26,10 @@ cd backend
 
 API base URL: `http://localhost:8080/api`
 
-Seed accounts are created automatically on first empty database startup:
+Seed accounts are created only when `APP_SEED_ENABLED=true` and seed passwords are configured:
 
-- Admin: `quochuy@gmail.com` / `huyle123`
-- User: `user@gmail.com` / `123456`
+- Admin email: `quochuy@gmail.com`
+- User email: `user@gmail.com`
 
 ## Sample Requests
 
@@ -39,7 +39,7 @@ Login:
 POST /api/auth/login
 Content-Type: application/json
 
-{"email":"quochuy@gmail.com","password":"huyle123"}
+{"email":"quochuy@gmail.com","password":"<APP_SEED_ADMIN_PASSWORD>"}
 ```
 
 Create song as admin:

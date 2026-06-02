@@ -1,1 +1,25 @@
 /docs/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Java / Spring
+backend/target/
+*.log
+backend/*.log
+
+# Frontend
+frontend/dist/
+frontend/node_modules/
+
+# Runtime uploads
+backend/uploads/
+uploads/
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

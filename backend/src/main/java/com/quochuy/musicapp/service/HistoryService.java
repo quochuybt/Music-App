@@ -17,13 +17,15 @@ public class HistoryService {
     private final SongService songService;
     private final CurrentUserService currentUserService;
 
+    @Transactional(readOnly = true)
     public List<SongResponse> mine() {
         return historyRepository.findByUserIdOrderByListenedAtDesc(currentUserService.get().getId()).stream()
                 .map(ListeningHistory::getSong).map(SongMapper::toResponse).toList();
     }
+    @Transactional
     public SongResponse savePlay(Long songId) {
         User user = currentUserService.get();
-        Song song = songService.getEntity(songId);
+        Song song = songService.getActiveEntity(songId);
         ListeningHistory history = historyRepository.findByUserIdAndSongId(user.getId(), songId)
                 .orElse(ListeningHistory.builder().user(user).song(song).build());
         history.setListenedAt(LocalDateTime.now());
