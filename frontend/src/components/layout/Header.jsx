@@ -1,14 +1,12 @@
-import { LogOut, Menu, Moon, Search, Shield, Sun, User } from "lucide-react";
+import { LogOut, Menu, Search, Shield, User } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Button from "../common/Button";
 import ConfirmDialog from "../common/ConfirmDialog";
 import { useAuth } from "../../hooks/useAuth";
-import { useTheme } from "../../hooks/useTheme";
 
 export default function Header({ onMenu }) {
   const { user, isAuthenticated, logout } = useAuth();
-  const { mode, toggleTheme } = useTheme();
   const [confirmLogout, setConfirmLogout] = useState(false);
   const navigate = useNavigate();
 
@@ -26,7 +24,6 @@ export default function Header({ onMenu }) {
           <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <input className="h-11 w-full rounded-2xl border border-white/10 bg-white/[0.06] pl-11 pr-3 text-sm text-slate-100 outline-none transition duration-300 placeholder:text-slate-500 focus:border-emerald-300/60 focus:ring-4 focus:ring-emerald-300/10" placeholder="Tìm bài hát, ca sĩ, album..." onKeyDown={(e) => e.key === "Enter" && navigate(`/songs?keyword=${encodeURIComponent(e.currentTarget.value)}`)} />
         </div>
-        <Button variant="ghost" className="hidden h-12 w-12 px-0 md:inline-flex" onClick={toggleTheme}>{mode === "dark" ? <Sun size={24} /> : <Moon size={24} />}</Button>
         {isAuthenticated ? (
           <div className="flex items-center gap-2">
             {user?.role === "ADMIN" && <Link to="/admin/dashboard"><Button variant="ghost" className="hidden sm:inline-flex"><Shield size={16} /> Admin</Button></Link>}

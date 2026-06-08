@@ -38,7 +38,7 @@ export default function Sidebar({ open, onClose }) {
         className="mt-4 flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-400 transition duration-300 hover:bg-white/[0.06] hover:text-white"
       >
         {mode === "dark" ? <Sun size={18} /> : <Moon size={18} />}
-        {mode === "dark" ? "Giao dien sang" : "Giao dien toi"}
+        {mode === "dark" ? "Giao diện sáng" : "Giao diện tối"}
       </button>
     </aside>
   );
