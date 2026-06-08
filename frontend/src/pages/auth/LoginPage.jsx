@@ -73,16 +73,8 @@ function GoogleLoginButton({ onToken }) {
     <button
       type="button"
       onClick={() => startGoogleLogin()}
-      className="flex h-12 w-full items-center justify-center gap-3 rounded-xl bg-white text-sm font-bold text-slate-900 transition hover:bg-slate-100 active:scale-[0.99]"
+      className="flex h-12 w-full items-center justify-center rounded-xl bg-white text-sm font-bold text-slate-900 transition hover:bg-slate-100 active:scale-[0.99]"
     >
-      <span className="grid h-6 w-6 place-items-center rounded-full bg-white">
-        <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
-          <path fill="#4285F4" d="M21.6 12.23c0-.74-.07-1.45-.19-2.13H12v4.03h5.38a4.6 4.6 0 0 1-1.99 3.02v2.51h3.22c1.89-1.74 2.99-4.3 2.99-7.43Z" />
-          <path fill="#34A853" d="M12 22c2.7 0 4.97-.9 6.62-2.43l-3.22-2.51c-.9.6-2.04.95-3.4.95-2.61 0-4.82-1.76-5.61-4.13H3.06v2.59A10 10 0 0 0 12 22Z" />
-          <path fill="#FBBC05" d="M6.39 13.88a6.02 6.02 0 0 1 0-3.76V7.53H3.06a10 10 0 0 0 0 8.94l3.33-2.59Z" />
-          <path fill="#EA4335" d="M12 5.99c1.47 0 2.79.51 3.83 1.5l2.86-2.86C16.96 3.02 14.7 2 12 2a10 10 0 0 0-8.94 5.53l3.33 2.59C7.18 7.75 9.39 5.99 12 5.99Z" />
-        </svg>
-      </span>
       Đăng nhập bằng Google
     </button>
   );
