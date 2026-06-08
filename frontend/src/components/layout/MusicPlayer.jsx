@@ -82,7 +82,7 @@ export default function MusicPlayer() {
   const hasAudio = Boolean(currentSong.audioUrl);
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#080b10]/92 px-3 py-3 backdrop-blur-xl lg:left-64">
+    <div className="player-bar fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#080b10]/92 px-3 py-3 backdrop-blur-xl lg:left-64">
       {hasAudio && (
         <audio
           ref={audioRef}

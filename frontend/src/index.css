@@ -35,15 +35,28 @@ body {
 
 :root:not(.dark) {
   color-scheme: light;
-  background: #eef3ef;
+  --light-page: #edf3f1;
+  --light-page-soft: #f6f9f7;
+  --light-surface: rgb(255 255 255 / 0.9);
+  --light-surface-strong: rgb(255 255 255 / 0.96);
+  --light-surface-muted: rgb(232 241 238 / 0.78);
+  --light-border: rgb(15 47 53 / 0.12);
+  --light-border-strong: rgb(15 47 53 / 0.18);
+  --light-text: #0b1720;
+  --light-muted: #526371;
+  --light-primary: #008f7a;
+  --light-primary-strong: #006f61;
+  --light-primary-soft: rgb(0 143 122 / 0.13);
+  --light-primary-wash: rgb(0 143 122 / 0.08);
+  background: var(--light-page);
 }
 
 :root:not(.dark) body {
   background:
-    radial-gradient(circle at 20% 0%, rgb(16 185 129 / 0.10), transparent 28rem),
-    radial-gradient(circle at 88% 10%, rgb(245 158 11 / 0.08), transparent 24rem),
-    linear-gradient(180deg, #f8fafc 0%, #edf2f0 52%, #e3ebe6 100%);
-  color: #0f172a;
+    radial-gradient(circle at 16% 0%, rgb(0 143 122 / 0.13), transparent 27rem),
+    radial-gradient(circle at 92% 8%, rgb(30 64 175 / 0.06), transparent 24rem),
+    linear-gradient(180deg, var(--light-page-soft) 0%, var(--light-page) 48%, #e3ece8 100%);
+  color: var(--light-text);
 }
 
 button,
@@ -80,10 +93,13 @@ html {
 
 :root:not(.dark) .app-surface {
   background:
-    linear-gradient(180deg, rgb(255 255 255 / 0.98), rgb(255 255 255 / 0.88)),
-    rgb(255 255 255 / 0.94);
-  border-color: rgb(15 23 42 / 0.12);
-  box-shadow: 0 22px 70px rgb(15 23 42 / 0.14), inset 0 1px 0 rgb(255 255 255 / 0.95);
+    linear-gradient(180deg, var(--light-surface-strong), rgb(248 252 250 / 0.88)),
+    var(--light-surface);
+  border-color: var(--light-border);
+  box-shadow:
+    0 24px 70px rgb(15 47 53 / 0.12),
+    0 2px 8px rgb(15 47 53 / 0.05),
+    inset 0 1px 0 rgb(255 255 255 / 0.95);
 }
 
 .page-kicker {
@@ -95,7 +111,7 @@ html {
 }
 
 :root:not(.dark) .page-kicker {
-  color: #047857;
+  color: var(--light-primary-strong);
 }
 
 .text-muted {
@@ -112,7 +128,7 @@ html {
 :root:not(.dark) .text-slate-300,
 :root:not(.dark) .text-slate-400,
 :root:not(.dark) .text-slate-500 {
-  color: #475569 !important;
+  color: var(--light-muted) !important;
 }
 
 :root:not(.dark) .on-dark,
@@ -134,34 +150,81 @@ html {
 }
 
 :root:not(.dark) .badge {
-  background-color: rgb(16 185 129 / 0.14) !important;
-  color: #047857 !important;
-  border-color: rgb(5 150 105 / 0.28) !important;
+  background-color: var(--light-primary-soft) !important;
+  color: var(--light-primary-strong) !important;
+  border-color: rgb(0 111 97 / 0.24) !important;
+}
+
+:root:not(.dark) .app-header,
+:root:not(.dark) .app-sidebar,
+:root:not(.dark) .player-bar {
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.92), rgb(244 250 247 / 0.86)),
+    rgb(244 250 247 / 0.88) !important;
+  border-color: var(--light-border) !important;
+  box-shadow: 0 18px 55px rgb(15 47 53 / 0.10);
+}
+
+:root:not(.dark) .app-sidebar {
+  box-shadow: 18px 0 70px rgb(15 47 53 / 0.12);
+}
+
+:root:not(.dark) .player-bar {
+  box-shadow: 0 -18px 55px rgb(15 47 53 / 0.12);
+}
+
+:root:not(.dark) .ui-button[data-variant="primary"] {
+  background-color: var(--light-primary) !important;
+  color: #f8fffd !important;
+  box-shadow: 0 14px 30px rgb(0 143 122 / 0.24) !important;
+}
+
+:root:not(.dark) .ui-button[data-variant="primary"]:hover {
+  background-color: var(--light-primary-strong) !important;
+}
+
+:root:not(.dark) .ui-button[data-variant="secondary"],
+:root:not(.dark) .ui-button[data-variant="ghost"] {
+  color: var(--light-text) !important;
+}
+
+:root:not(.dark) .ui-button[data-variant="secondary"] {
+  background-color: var(--light-surface-muted) !important;
+  border-color: var(--light-border-strong) !important;
+}
+
+:root:not(.dark) .ui-button[data-variant="ghost"]:hover,
+:root:not(.dark) .app-sidebar a:hover,
+:root:not(.dark) .app-sidebar button:hover {
+  background-color: var(--light-primary-wash) !important;
+  color: var(--light-primary-strong) !important;
 }
 
 :root:not(.dark) [class*="bg-[#080b10]"],
 :root:not(.dark) [class*="bg-[#070a0f]"] {
-  background-color: rgb(255 255 255 / 0.86) !important;
+  background-color: rgb(244 250 247 / 0.88) !important;
 }
 
 :root:not(.dark) [class*="bg-[#101722]"],
 :root:not(.dark) [class*="bg-[#111722]"] {
-  background-color: #ffffff !important;
+  background-color: var(--light-surface-strong) !important;
 }
 
 :root:not(.dark) [class*="bg-white/"],
 :root:not(.dark) [class*="bg-white["] {
-  background-color: rgb(15 23 42 / 0.08) !important;
+  background-color: var(--light-surface-muted) !important;
 }
 
 :root:not(.dark) [class*="border-white"] {
-  border-color: rgb(15 23 42 / 0.10) !important;
+  border-color: var(--light-border) !important;
 }
 
 :root:not(.dark) input,
 :root:not(.dark) select,
 :root:not(.dark) textarea {
-  color: #0f172a;
+  color: var(--light-text);
+  background-color: rgb(255 255 255 / 0.78) !important;
+  border-color: var(--light-border-strong) !important;
 }
 
 :root:not(.dark) input::placeholder,
