@@ -1,13 +1,16 @@
 import { Pause, Play, SkipBack, SkipForward, Volume2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
 import { audioFailed, nextSong, previousSong, setProgress, setVolume, togglePlay } from "../../features/player/playerSlice";
 import { DEFAULT_IMAGE } from "../../utils/constants";
 import Button from "../common/Button";
 
 export default function MusicPlayer() {
   const dispatch = useDispatch();
-  const { currentSong, isPlaying, progress, volume } = useSelector((state) => state.player);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { currentSong, isPlaying, progress, volume, queue, currentIndex } = useSelector((state) => state.player);
   const audioRef = useRef(null);
   const [audioError, setAudioError] = useState("");
 
@@ -57,6 +60,24 @@ export default function MusicPlayer() {
     dispatch(audioFailed());
   };
 
+  const syncDetailRoute = (song) => {
+    if (song?.id && /^\/songs\/[^/]+$/.test(location.pathname)) {
+      navigate(`/songs/${song.id}`);
+    }
+  };
+
+  const handleNextSong = () => {
+    const next = queue.length ? queue[(currentIndex + 1) % queue.length] : currentSong;
+    dispatch(nextSong());
+    syncDetailRoute(next);
+  };
+
+  const handlePreviousSong = () => {
+    const previous = queue.length ? queue[currentIndex === 0 ? queue.length - 1 : currentIndex - 1] : currentSong;
+    dispatch(previousSong());
+    syncDetailRoute(previous);
+  };
+
   if (!currentSong) return null;
   const hasAudio = Boolean(currentSong.audioUrl);
 
@@ -69,7 +90,7 @@ export default function MusicPlayer() {
           preload="metadata"
           onCanPlay={playLoadedAudio}
           onTimeUpdate={handleTimeUpdate}
-          onEnded={() => dispatch(nextSong())}
+          onEnded={handleNextSong}
           onError={handleAudioError}
         />
       )}
@@ -82,9 +103,9 @@ export default function MusicPlayer() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="ghost" className="h-12 w-12 px-0" onClick={() => dispatch(previousSong())}><SkipBack size={24} /></Button>
+          <Button variant="ghost" className="h-12 w-12 px-0" onClick={handlePreviousSong}><SkipBack size={24} /></Button>
           <Button className="h-14 w-14 rounded-full px-0" disabled={!hasAudio} onClick={() => dispatch(togglePlay())}>{isPlaying ? <Pause size={26} /> : <Play size={26} />}</Button>
-          <Button variant="ghost" className="h-12 w-12 px-0" onClick={() => dispatch(nextSong())}><SkipForward size={24} /></Button>
+          <Button variant="ghost" className="h-12 w-12 px-0" onClick={handleNextSong}><SkipForward size={24} /></Button>
         </div>
         <div className="hidden items-center gap-3 md:flex">
           <input className="h-1.5 flex-1 cursor-pointer accent-emerald-400" type="range" min="0" max="100" value={progress} disabled={!hasAudio} onChange={handleSeek} />
