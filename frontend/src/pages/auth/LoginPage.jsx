@@ -48,15 +48,18 @@ export default function LoginPage() {
         <div className="space-y-4">
           {googleClientId && (
             <>
-              <GoogleLogin
-                onSuccess={handleGoogleSuccess}
-                onError={() => toast.error("Đăng nhập Google thất bại")}
-                width="100%"
-                theme="filled_black"
-                shape="pill"
-                text="signin_with"
-              />
-              <div className="flex items-center gap-3 text-xs uppercase tracking-[0.24em] text-slate-500">
+              <div className="w-full overflow-hidden rounded-xl [&>div]:!w-full [&_iframe]:!w-full">
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={() => toast.error("Đăng nhập Google thất bại")}
+                  width="400"
+                  theme="filled_black"
+                  shape="rectangular"
+                  size="large"
+                  text="signin_with"
+                />
+              </div>
+              <div className="flex items-center gap-3 text-xs uppercase text-slate-500">
                 <span className="h-px flex-1 bg-white/10" />
                 hoặc
                 <span className="h-px flex-1 bg-white/10" />
