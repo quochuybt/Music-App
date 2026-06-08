@@ -13,9 +13,9 @@ export const login = createAsyncThunk("auth/login", async (payload, { rejectWith
   }
 });
 
-export const googleLogin = createAsyncThunk("auth/googleLogin", async (idToken, { rejectWithValue }) => {
+export const googleLogin = createAsyncThunk("auth/googleLogin", async (payload, { rejectWithValue }) => {
   try {
-    return await authApi.googleLogin({ idToken });
+    return await authApi.googleLogin(typeof payload === "string" ? { idToken: payload } : payload);
   } catch (error) {
     return rejectWithValue(error.response?.data?.message || "Đăng nhập Google thất bại");
   }

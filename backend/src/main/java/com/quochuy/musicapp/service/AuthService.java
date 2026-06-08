@@ -18,7 +18,14 @@ import org.springframework.security.authentication.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
+import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -64,20 +71,22 @@ public class AuthService {
             throw new BadRequestException("Google login is not configured");
         }
 
-        GoogleIdToken.Payload payload = verifyGoogleIdToken(request.getIdToken());
-        String email = payload.getEmail();
+        GoogleProfile profile = request.getIdToken() != null && !request.getIdToken().isBlank()
+                ? profileFromIdToken(request.getIdToken())
+                : profileFromAccessToken(request.getAccessToken());
+        String email = profile.email();
         if (email == null || email.isBlank()) {
             throw new BadRequestException("Google account email is required");
         }
-        if (!Boolean.TRUE.equals(payload.getEmailVerified())) {
+        if (!profile.emailVerified()) {
             throw new BadRequestException("Google email is not verified");
         }
 
         User user = userRepository.findByEmail(email).orElseGet(() -> userRepository.save(User.builder()
-                .fullName((String) payload.getOrDefault("name", email))
+                .fullName(profile.name() != null && !profile.name().isBlank() ? profile.name() : email)
                 .email(email)
                 .password(passwordEncoder.encode(UUID.randomUUID().toString()))
-                .avatarUrl((String) payload.get("picture"))
+                .avatarUrl(profile.picture())
                 .role(Role.USER)
                 .status(UserStatus.ACTIVE)
                 .build()));
@@ -88,6 +97,52 @@ public class AuthService {
 
         CustomUserDetails details = new CustomUserDetails(user);
         return AuthResponse.builder().token(jwtService.generateToken(details)).user(UserMapper.toResponse(user)).build();
+    }
+
+    private GoogleProfile profileFromIdToken(String idToken) {
+        GoogleIdToken.Payload payload = verifyGoogleIdToken(idToken);
+        return new GoogleProfile(payload.getEmail(), Boolean.TRUE.equals(payload.getEmailVerified()),
+                (String) payload.get("name"), (String) payload.get("picture"));
+    }
+
+    @SuppressWarnings("unchecked")
+    private GoogleProfile profileFromAccessToken(String accessToken) {
+        if (accessToken == null || accessToken.isBlank()) {
+            throw new BadRequestException("Google token is required");
+        }
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+            String encodedAccessToken = URLEncoder.encode(accessToken, StandardCharsets.UTF_8);
+            HttpRequest tokenInfoRequest = HttpRequest.newBuilder()
+                    .uri(URI.create("https://oauth2.googleapis.com/tokeninfo?access_token=" + encodedAccessToken))
+                    .GET()
+                    .build();
+            HttpResponse<String> tokenInfoResponse = client.send(tokenInfoRequest, HttpResponse.BodyHandlers.ofString());
+            if (tokenInfoResponse.statusCode() != 200) {
+                throw new BadRequestException("Invalid Google token");
+            }
+            Map<String, Object> tokenInfo = new com.fasterxml.jackson.databind.ObjectMapper().readValue(tokenInfoResponse.body(), Map.class);
+            if (!googleClientId.equals(tokenInfo.get("aud"))) {
+                throw new BadRequestException("Invalid Google token audience");
+            }
+
+            HttpRequest userInfoRequest = HttpRequest.newBuilder()
+                    .uri(URI.create("https://www.googleapis.com/oauth2/v3/userinfo"))
+                    .header("Authorization", "Bearer " + accessToken)
+                    .GET()
+                    .build();
+            HttpResponse<String> userInfoResponse = client.send(userInfoRequest, HttpResponse.BodyHandlers.ofString());
+            if (userInfoResponse.statusCode() != 200) {
+                throw new BadRequestException("Unable to read Google profile");
+            }
+            Map<String, Object> userInfo = new com.fasterxml.jackson.databind.ObjectMapper().readValue(userInfoResponse.body(), Map.class);
+            boolean verified = Boolean.TRUE.equals(userInfo.get("email_verified")) || "true".equals(String.valueOf(userInfo.get("email_verified")));
+            return new GoogleProfile((String) userInfo.get("email"), verified, (String) userInfo.get("name"), (String) userInfo.get("picture"));
+        } catch (BadRequestException exception) {
+            throw exception;
+        } catch (Exception exception) {
+            throw new BadRequestException("Unable to verify Google token");
+        }
     }
 
     private GoogleIdToken.Payload verifyGoogleIdToken(String idToken) {
@@ -106,6 +161,8 @@ public class AuthService {
             throw new BadRequestException("Unable to verify Google token");
         }
     }
+
+    private record GoogleProfile(String email, boolean emailVerified, String name, String picture) {}
 
     public UserResponse me() {
         return UserMapper.toResponse(currentUserService.get());
