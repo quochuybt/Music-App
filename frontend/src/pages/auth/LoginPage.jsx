@@ -48,11 +48,11 @@ export default function LoginPage() {
         <div className="space-y-4">
           {googleClientId && (
             <>
-              <div className="w-full overflow-hidden rounded-xl [&>div]:!w-full [&_iframe]:!w-full">
+              <div className="flex w-full justify-center">
                 <GoogleLogin
                   onSuccess={handleGoogleSuccess}
                   onError={() => toast.error("Đăng nhập Google thất bại")}
-                  width="400"
+                  width="360"
                   theme="filled_black"
                   shape="rectangular"
                   size="large"
