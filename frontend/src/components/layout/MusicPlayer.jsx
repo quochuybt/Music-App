@@ -91,6 +91,7 @@ export default function MusicPlayer() {
           <Volume2 size={22} className="text-slate-400" />
           <input className="w-24 accent-emerald-400" type="range" min="0" max="100" value={volume} onChange={(e) => dispatch(setVolume(e.target.value))} />
         </div>
+        <input className="col-span-2 h-1.5 w-full cursor-pointer accent-emerald-400 md:hidden" type="range" min="0" max="100" value={progress} disabled={!hasAudio} onChange={handleSeek} />
       </div>
     </div>
   );
