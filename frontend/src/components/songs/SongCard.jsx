@@ -9,7 +9,7 @@ export default function SongCard({ song, queue = [] }) {
       <div className="relative aspect-square overflow-hidden rounded-[1rem] bg-slate-900">
         <img src={song.imageUrl || DEFAULT_IMAGE} alt={song.title} className="h-full w-full object-cover transition duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-105" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/72 via-black/10 to-transparent opacity-80" />
-        <div className="absolute inset-x-3 bottom-3 flex justify-between opacity-0 transition duration-300 group-hover:opacity-100">
+        <div className="absolute inset-x-3 bottom-3 flex justify-between opacity-100 transition duration-300 md:opacity-0 md:group-hover:opacity-100">
           <PlayButton song={song} queue={queue} compact />
           <FavoriteButton songId={song.id} />
         </div>

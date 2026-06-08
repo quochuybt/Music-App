@@ -9,7 +9,14 @@ import { DEFAULT_IMAGE } from "../../utils/constants";
 export default function SongDetailPage() {
   const { id } = useParams();
   const [song, setSong] = useState(null);
-  useEffect(() => { songApi.get(id).then(setSong); }, [id]);
+  const [queue, setQueue] = useState([]);
+  useEffect(() => {
+    Promise.all([songApi.get(id), songApi.list({ size: 50 })])
+      .then(([songData, songPage]) => {
+        setSong(songData);
+        setQueue(songPage.content || []);
+      });
+  }, [id]);
   if (!song) return <Loading />;
   return (
     <div className="app-surface grid gap-7 rounded-[2rem] p-5 md:grid-cols-[320px_1fr] md:p-7">
@@ -19,7 +26,7 @@ export default function SongDetailPage() {
         <h1 className="text-4xl font-extrabold leading-tight text-white md:text-5xl">{song.title}</h1>
         <p className="text-slate-400">{song.artistName} - {song.albumTitle || song.genreName} - {song.duration}</p>
         <p className="max-w-2xl leading-7 text-slate-300">{song.description || "Một bài hát trong thư viện VietMusic."}</p>
-        <div className="flex gap-2"><PlayButton song={song} /><FavoriteButton songId={song.id} /></div>
+        <div className="flex gap-2"><PlayButton song={song} queue={queue} /><FavoriteButton songId={song.id} /></div>
       </div>
     </div>
   );
