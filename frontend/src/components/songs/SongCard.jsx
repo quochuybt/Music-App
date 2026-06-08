@@ -19,9 +19,9 @@ export default function SongCard({ song, queue = [], compactMobile = false }) {
           <Link to={`/songs/${song.id}`} className="block truncate text-sm font-semibold text-white transition hover:text-emerald-200 sm:text-base">{song.title}</Link>
           <p className="truncate text-xs text-slate-400 sm:text-sm">{song.artistName || "VietMusic"} {song.duration ? `- ${song.duration}` : ""}</p>
         </div>
-        <div className="flex shrink-0 items-center gap-1 sm:hidden">
-          <PlayButton song={song} queue={queue} compact size="sm" />
-          <FavoriteButton songId={song.id} />
+        <div className="flex shrink-0 items-center gap-2 sm:hidden">
+          <PlayButton song={song} queue={queue} compact />
+          <FavoriteButton songId={song.id} size="lg" />
         </div>
       </article>
     );

@@ -24,8 +24,8 @@ export default function FavoriteButton({ songId, size = "md" }) {
       toast.error(error.response?.data?.message || "Không thực hiện được");
     }
   };
-  const buttonClass = size === "sm" ? "h-9 w-9 px-0" : "h-11 w-11 px-0";
-  const iconSize = size === "sm" ? 18 : 21;
+  const buttonClass = size === "sm" ? "h-9 w-9 px-0" : size === "lg" ? "h-12 w-12 px-0" : "h-11 w-11 px-0";
+  const iconSize = size === "sm" ? 18 : size === "lg" ? 24 : 21;
   return (
     <Button variant="ghost" className={buttonClass} onClick={toggle} title="Yêu thích">
       <Heart size={iconSize} className={active ? "fill-rose-500 text-rose-500" : ""} />
