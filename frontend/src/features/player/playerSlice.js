@@ -37,6 +37,8 @@ const playerSlice = createSlice({
       state.currentSong = normalizeSong(action.payload);
       state.isPlaying = true;
       state.progress = 0;
+      if (!state.queue.length) state.queue = [action.payload];
+      state.currentIndex = Math.max(0, state.queue.findIndex((song) => song.id === action.payload?.id));
     },
     pauseSong(state) {
       state.isPlaying = false;
@@ -83,6 +85,8 @@ const playerSlice = createSlice({
       state.currentSong = normalizeSong(action.payload);
       state.isPlaying = true;
       state.progress = 0;
+      if (!state.queue.length) state.queue = [action.payload];
+      state.currentIndex = Math.max(0, state.queue.findIndex((song) => song.id === action.payload?.id));
     });
   },
 });
