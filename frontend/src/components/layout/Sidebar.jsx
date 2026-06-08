@@ -1,6 +1,7 @@
-import { Album, Heart, History, Home, ListMusic, Mic2, Music2, Radio } from "lucide-react";
+import { Album, Heart, History, Home, ListMusic, Mic2, Moon, Music2, Radio, Sun } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import clsx from "clsx";
+import { useTheme } from "../../hooks/useTheme";
 
 const links = [
   { to: "/", label: "Trang chủ", icon: Home },
@@ -13,6 +14,8 @@ const links = [
 ];
 
 export default function Sidebar({ open, onClose }) {
+  const { mode, toggleTheme } = useTheme();
+
   return (
     <aside className={clsx("fixed inset-y-0 left-0 z-40 w-64 border-r border-white/10 bg-[#070a0f]/95 p-4 text-slate-100 shadow-[18px_0_70px_rgb(0_0_0/0.35)] transition duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] lg:translate-x-0", open ? "translate-x-0" : "-translate-x-full")}>
       <NavLink to="/" onClick={onClose} className="mb-8 flex items-center gap-3 rounded-2xl bg-white/[0.04] p-3 ring-1 ring-white/10 transition hover:bg-white/[0.07]">
@@ -29,6 +32,14 @@ export default function Sidebar({ open, onClose }) {
           </NavLink>
         ))}
       </nav>
+      <button
+        type="button"
+        onClick={toggleTheme}
+        className="mt-4 flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-400 transition duration-300 hover:bg-white/[0.06] hover:text-white"
+      >
+        {mode === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+        {mode === "dark" ? "Giao dien sang" : "Giao dien toi"}
+      </button>
     </aside>
   );
 }
