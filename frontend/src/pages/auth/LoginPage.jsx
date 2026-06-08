@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { GoogleLogin } from "@react-oauth/google";
 import { Radio } from "lucide-react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -6,7 +7,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "../../components/common/Button";
 import Input from "../../components/common/Input";
-import { login } from "../../features/auth/authSlice";
+import { googleLogin, login } from "../../features/auth/authSlice";
 import { loginSchema } from "../../utils/validators";
 
 export default function LoginPage() {
@@ -15,11 +16,24 @@ export default function LoginPage() {
   const location = useLocation();
   const loading = useSelector((state) => state.auth.loading);
   const { register, handleSubmit, formState: { errors } } = useForm({ resolver: zodResolver(loginSchema) });
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
   const onSubmit = async (values) => {
     const res = await dispatch(login(values));
     if (res.meta.requestStatus === "fulfilled") {
       toast.success("Đăng nhập thành công");
+      navigate(location.state?.from?.pathname || "/");
+    } else toast.error(res.payload);
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    if (!credentialResponse.credential) {
+      toast.error("Không lấy được thông tin Google");
+      return;
+    }
+    const res = await dispatch(googleLogin(credentialResponse.credential));
+    if (res.meta.requestStatus === "fulfilled") {
+      toast.success("Đăng nhập Google thành công");
       navigate(location.state?.from?.pathname || "/");
     } else toast.error(res.payload);
   };
@@ -32,6 +46,23 @@ export default function LoginPage() {
           <div><h1 className="text-xl font-bold text-white">Đăng nhập</h1><p className="text-sm text-slate-400">Trở lại VietMusic</p></div>
         </div>
         <div className="space-y-4">
+          {googleClientId && (
+            <>
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={() => toast.error("Đăng nhập Google thất bại")}
+                width="100%"
+                theme="filled_black"
+                shape="pill"
+                text="signin_with"
+              />
+              <div className="flex items-center gap-3 text-xs uppercase tracking-[0.24em] text-slate-500">
+                <span className="h-px flex-1 bg-white/10" />
+                hoặc
+                <span className="h-px flex-1 bg-white/10" />
+              </div>
+            </>
+          )}
           <Input label="Email" {...register("email")} error={errors.email?.message} />
           <Input label="Mật khẩu" type="password" {...register("password")} error={errors.password?.message} />
           <Button className="w-full" disabled={loading}>{loading ? "Đang xử lý..." : "Đăng nhập"}</Button>

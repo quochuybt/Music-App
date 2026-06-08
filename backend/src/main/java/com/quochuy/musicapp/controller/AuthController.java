@@ -21,6 +21,11 @@ public class AuthController {
         return ApiResponse.ok(authService.login(request));
     }
 
+    @PostMapping("/google")
+    public ApiResponse<AuthResponse> googleLogin(@Valid @RequestBody GoogleLoginRequest request) {
+        return ApiResponse.ok(authService.googleLogin(request));
+    }
+
     @GetMapping("/me")
     public ApiResponse<UserResponse> me() {
         return ApiResponse.ok(authService.me());
