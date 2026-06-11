@@ -6,7 +6,13 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor
-@Entity @Table(name = "songs")
+@Entity
+@Table(name = "songs", indexes = {
+        @Index(name = "idx_songs_status_created_at", columnList = "status, created_at"),
+        @Index(name = "idx_songs_artist_status", columnList = "artist_id, status"),
+        @Index(name = "idx_songs_album_status", columnList = "album_id, status"),
+        @Index(name = "idx_songs_genre_status", columnList = "genre_id, status")
+})
 public class Song {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

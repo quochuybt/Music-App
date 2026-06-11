@@ -24,20 +24,20 @@ public class SongService {
 
     @Transactional(readOnly = true)
     public Page<SongResponse> publicSearch(Long genreId, Long artistId, Long albumId, String keyword, Pageable pageable) {
-        return songRepository.search(CommonStatus.ACTIVE, artistId, albumId, genreId, blankToNull(keyword), newestFirst(pageable)).map(SongMapper::toResponse);
+        return songRepository.searchResponses(CommonStatus.ACTIVE, artistId, albumId, genreId, blankToNull(keyword), newestFirst(pageable));
     }
     @Transactional(readOnly = true)
     public Page<SongResponse> adminList(Pageable pageable) { return songRepository.findAll(newestFirst(pageable)).map(SongMapper::toResponse); }
     @Transactional(readOnly = true)
-    public Page<SongResponse> byArtist(Long id, Pageable pageable) { return songRepository.findByArtistIdAndStatus(id, CommonStatus.ACTIVE, pageable).map(SongMapper::toResponse); }
+    public Page<SongResponse> byArtist(Long id, Pageable pageable) { return songRepository.searchResponses(CommonStatus.ACTIVE, id, null, null, null, newestFirst(pageable)); }
     @Transactional(readOnly = true)
-    public Page<SongResponse> byAlbum(Long id, Pageable pageable) { return songRepository.findByAlbumIdAndStatus(id, CommonStatus.ACTIVE, pageable).map(SongMapper::toResponse); }
+    public Page<SongResponse> byAlbum(Long id, Pageable pageable) { return songRepository.searchResponses(CommonStatus.ACTIVE, null, id, null, null, newestFirst(pageable)); }
     @Transactional(readOnly = true)
-    public Page<SongResponse> byGenre(Long id, Pageable pageable) { return songRepository.findByGenreIdAndStatus(id, CommonStatus.ACTIVE, pageable).map(SongMapper::toResponse); }
+    public Page<SongResponse> byGenre(Long id, Pageable pageable) { return songRepository.searchResponses(CommonStatus.ACTIVE, null, null, id, null, newestFirst(pageable)); }
     public Song getEntity(Long id) { return songRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Song not found")); }
     public Song getActiveEntity(Long id) { return songRepository.findByIdAndStatus(id, CommonStatus.ACTIVE).orElseThrow(() -> new ResourceNotFoundException("Song not found")); }
     @Transactional(readOnly = true)
-    public SongResponse getPublic(Long id) { return SongMapper.toResponse(songRepository.findByIdAndStatus(id, CommonStatus.ACTIVE).orElseThrow(() -> new ResourceNotFoundException("Song not found"))); }
+    public SongResponse getPublic(Long id) { return songRepository.findResponseByIdAndStatus(id, CommonStatus.ACTIVE).orElseThrow(() -> new ResourceNotFoundException("Song not found")); }
     @Transactional(readOnly = true)
     public SongResponse getAdmin(Long id) { return SongMapper.toResponse(getEntity(id)); }
     @Transactional
