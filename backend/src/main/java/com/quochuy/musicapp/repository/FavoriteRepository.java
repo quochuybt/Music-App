@@ -15,16 +15,6 @@ public interface FavoriteRepository extends JpaRepository<Favorite, FavoriteId> 
     @Query(value = "delete from favorites where song_id = :songId", nativeQuery = true)
     void deleteAllBySongId(@Param("songId") Long songId);
 
-    @Query(value = """
-            select s.*
-            from songs s
-            join (
-                select song_id
-                from favorites
-                group by song_id
-                order by count(*) desc
-                limit 1
-            ) top_favorite on top_favorite.song_id = s.id
-            """, nativeQuery = true)
-    Optional<Song> findMostFavoriteSong();
+    @Query(value = "select song_id from favorites group by song_id order by count(*) desc limit 1", nativeQuery = true)
+    Optional<Long> findMostFavoriteSongId();
 }

@@ -14,16 +14,6 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-SET @MYSQLDUMP_TEMP_LOG_BIN = @@SESSION.SQL_LOG_BIN;
-SET @@SESSION.SQL_LOG_BIN= 0;
-
---
--- GTID state at the beginning of the backup 
---
-
-SET @@GLOBAL.GTID_PURGED=/*!80000 '+'*/ '604debec-6335-11f1-9029-0a99fe235fbb:1-182,
-7f07f1ad-5ea5-11f1-a43a-7e7df3e2352a:1-86,
-c3008fc8-6401-11f1-82e3-aabbe11421a6:1-69';
 
 --
 -- Table structure for table `albums`
@@ -73,7 +63,7 @@ CREATE TABLE `artists` (
   `status` enum('ACTIVE','INACTIVE') NOT NULL,
   `updated_at` datetime(6) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -82,7 +72,7 @@ CREATE TABLE `artists` (
 
 LOCK TABLES `artists` WRITE;
 /*!40000 ALTER TABLE `artists` DISABLE KEYS */;
-INSERT INTO `artists` VALUES (6,NULL,'2026-06-08 13:29:43.741168','https://yt3.ggpht.com/6_Aep_88kiQuiy16FH2JfgTf-kDCYLtvQ4qwHpH0wOCKwvCCwOAr0qea8Rp6nN2OQItyGco5Xg=s88-c-k-c0x00ffffff-no-rj','Minh Huy','ACTIVE','2026-06-08 13:29:43.741168'),(7,NULL,'2026-06-08 13:39:17.936876','https://yt3.ggpht.com/tjO_cpAs12qMZk01Lja3ffCzPOm8ULoZOrq0U3meb6pzYv0dEd_v7XHEzsW1frweWMvw2X5XCg=s88-c-k-c0x00ffffff-no-rj','Việt Anh','ACTIVE','2026-06-08 13:39:17.936876'),(8,NULL,'2026-06-08 13:40:54.268141','https://yt3.ggpht.com/_5_Y9gyoNvnPt64FfdxZELuAVKFk-eTjCs6k2qMboXWTtwdrjHvm8p6jf8ZZSTxk0NK9U-INtQ=s88-c-k-c0x00ffffff-no-rj','tlinh','ACTIVE','2026-06-08 13:40:54.268141');
+INSERT INTO `artists` VALUES (6,NULL,'2026-06-08 13:29:43.741168','https://yt3.ggpht.com/6_Aep_88kiQuiy16FH2JfgTf-kDCYLtvQ4qwHpH0wOCKwvCCwOAr0qea8Rp6nN2OQItyGco5Xg=s88-c-k-c0x00ffffff-no-rj','Minh Huy','ACTIVE','2026-06-08 13:29:43.741168'),(7,NULL,'2026-06-08 13:39:17.936876','https://yt3.ggpht.com/tjO_cpAs12qMZk01Lja3ffCzPOm8ULoZOrq0U3meb6pzYv0dEd_v7XHEzsW1frweWMvw2X5XCg=s88-c-k-c0x00ffffff-no-rj','Việt Anh','ACTIVE','2026-06-08 13:39:17.936876'),(8,NULL,'2026-06-08 13:40:54.268141','https://yt3.ggpht.com/_5_Y9gyoNvnPt64FfdxZELuAVKFk-eTjCs6k2qMboXWTtwdrjHvm8p6jf8ZZSTxk0NK9U-INtQ=s88-c-k-c0x00ffffff-no-rj','tlinh','ACTIVE','2026-06-08 13:40:54.268141'),(9,NULL,'2026-06-11 04:11:53.615648','https://yt3.googleusercontent.com/JjXWXfuT6jdhSMCe1jTk_VGx9dnkw3BtnJRdswXg-3aESzuFLnqtQKhJob0-piIplU_71YaC=s120-c-k-c0x00ffffff-no-rj','Soobin Hoàng Sơn','ACTIVE','2026-06-11 04:11:53.615648'),(11,NULL,'2026-06-11 04:19:01.108154','https://yt3.ggpht.com/OMWK6EO7ZsmYjvIIOm-0ZlKjiTScnfIJuXyhtWurPq0unO_3vEG78Nf67eDxOv95v0EKBxCqLw=s88-c-k-c0x00ffffff-no-rj','Tuấn Hưng','ACTIVE','2026-06-11 04:19:01.108154');
 /*!40000 ALTER TABLE `artists` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -169,7 +159,7 @@ CREATE TABLE `listening_history` (
 
 LOCK TABLES `listening_history` WRITE;
 /*!40000 ALTER TABLE `listening_history` DISABLE KEYS */;
-INSERT INTO `listening_history` VALUES (1,'2026-06-09 12:56:07.408962',21,1),(2,'2026-06-09 12:56:30.922095',22,1),(3,'2026-06-08 14:07:14.055942',22,2),(4,'2026-06-08 14:23:41.354960',21,2),(5,'2026-06-08 15:12:24.864827',22,5),(6,'2026-06-08 15:12:33.156151',21,5),(7,'2026-06-08 15:21:10.540287',23,5),(8,'2026-06-08 16:03:03.135786',22,6),(9,'2026-06-08 16:21:33.653989',23,7),(10,'2026-06-08 16:21:46.168871',22,7);
+INSERT INTO `listening_history` VALUES (1,'2026-06-09 12:56:07.408962',21,1),(2,'2026-06-11 04:06:15.606596',22,1),(3,'2026-06-08 14:07:14.055942',22,2),(4,'2026-06-08 14:23:41.354960',21,2),(5,'2026-06-08 15:12:24.864827',22,5),(6,'2026-06-08 15:12:33.156151',21,5),(7,'2026-06-08 15:21:10.540287',23,5),(8,'2026-06-08 16:03:03.135786',22,6),(9,'2026-06-08 16:21:33.653989',23,7),(10,'2026-06-08 16:21:46.168871',22,7);
 /*!40000 ALTER TABLE `listening_history` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -257,7 +247,7 @@ CREATE TABLE `songs` (
   CONSTRAINT `FKd5mor9lg3wkqhn2tp0r75nkm` FOREIGN KEY (`genre_id`) REFERENCES `genres` (`id`),
   CONSTRAINT `FKdjq2ujqovw5rc14q60f8p6b6e` FOREIGN KEY (`artist_id`) REFERENCES `artists` (`id`),
   CONSTRAINT `FKte4gkb2cqtk2erfa87oopj2cj` FOREIGN KEY (`album_id`) REFERENCES `albums` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -266,7 +256,7 @@ CREATE TABLE `songs` (
 
 LOCK TABLES `songs` WRITE;
 /*!40000 ALTER TABLE `songs` DISABLE KEYS */;
-INSERT INTO `songs` VALUES (21,'https://res.cloudinary.com/dtw9an8ly/video/upload/v1780925853/vietmusic/audio/b44917f8-5725-46a0-99d6-6699fa1b09bc.mp4','2026-06-08 13:37:35.601837','','4:35','https://i.ytimg.com/vi/sPQXOA6pzOg/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLDRY9kazSLiIjZLY_9qJ0oWc7xHwA',8,'ACTIVE','Ngày rời chuyến bay','2026-06-09 12:56:07.649914',NULL,6,7),(22,'https://res.cloudinary.com/dtw9an8ly/video/upload/v1780926015/vietmusic/audio/b6e0508e-5e07-4677-bd55-d4068455641b.mp3','2026-06-08 13:40:17.678910','','4:21','https://i.ytimg.com/vi/9IWNmqHW43I/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCp0CmTnBFvpLC3xvewjanWjLSQ5w',6,'ACTIVE','Ngày này năm ấy','2026-06-09 12:56:31.032640',NULL,7,7),(23,'https://res.cloudinary.com/dtw9an8ly/video/upload/v1780926083/vietmusic/audio/50dc2e17-fd80-442d-ba91-f49d8f62510e.mp3','2026-06-08 13:41:26.346001','','5:25','https://i.ytimg.com/vi/fyMgBQioTLo/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCAC0eQiNHs3k10YiyAkNMafKFASQ',3,'ACTIVE','Nếu lúc đó','2026-06-08 16:21:33.794835',NULL,8,11);
+INSERT INTO `songs` VALUES (21,'https://res.cloudinary.com/dtw9an8ly/video/upload/v1780925853/vietmusic/audio/b44917f8-5725-46a0-99d6-6699fa1b09bc.mp4','2026-06-08 13:37:35.601837','','4:35','https://i.ytimg.com/vi/sPQXOA6pzOg/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLDRY9kazSLiIjZLY_9qJ0oWc7xHwA',8,'ACTIVE','Ngày rời chuyến bay','2026-06-09 12:56:07.649914',NULL,6,7),(22,'https://res.cloudinary.com/dtw9an8ly/video/upload/v1780926015/vietmusic/audio/b6e0508e-5e07-4677-bd55-d4068455641b.mp3','2026-06-08 13:40:17.678910','','4:21','https://i.ytimg.com/vi/9IWNmqHW43I/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCp0CmTnBFvpLC3xvewjanWjLSQ5w',7,'ACTIVE','Ngày này năm ấy','2026-06-11 04:06:15.941097',NULL,7,7),(23,'https://res.cloudinary.com/dtw9an8ly/video/upload/v1780926083/vietmusic/audio/50dc2e17-fd80-442d-ba91-f49d8f62510e.mp3','2026-06-08 13:41:26.346001','','5:25','https://i.ytimg.com/vi/fyMgBQioTLo/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCAC0eQiNHs3k10YiyAkNMafKFASQ',3,'ACTIVE','Nếu lúc đó','2026-06-08 16:21:33.794835',NULL,8,11),(24,'https://res.cloudinary.com/dtw9an8ly/video/upload/v1781151448/vietmusic/audio/2b0deda3-e260-4540-9cf3-0c2cd810288f.mp3','2026-06-11 04:17:51.511748','','4:28','https://i.ytimg.com/vi/_w2PR0Sko8g/hq720.jpg?sqp=-oaymwEnCNAFEJQDSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLCnZFAdVaSTa0dZq2uBx0R2Les-7Q',0,'ACTIVE','Xin Đừng Lặng Im','2026-06-11 04:17:51.511748',NULL,9,7),(25,'https://res.cloudinary.com/dtw9an8ly/video/upload/v1781151721/vietmusic/audio/117a7473-25e3-4964-aa68-f409685e87e9.mp3','2026-06-11 04:22:23.690742','','4:12','https://i.ytimg.com/vi/SPn106LGnjU/hq720.jpg?sqp=-oaymwEnCNAFEJQDSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLCXvoGSKJta6k9ZDngA5-Rqbf11LQ',0,'ACTIVE','Anh nhớ em','2026-06-11 04:22:23.690742',NULL,11,7);
 /*!40000 ALTER TABLE `songs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -305,7 +295,6 @@ UNLOCK TABLES;
 --
 -- Dumping routines for database 'defaultdb'
 --
-SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -316,4 +305,4 @@ SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-06-11 10:50:18
+-- Dump completed on 2026-06-11 12:34:09

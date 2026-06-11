@@ -26,7 +26,10 @@ public class AdminDashboardService {
                 .totalGenres(genreRepository.count())
                 .totalUsers(userRepository.count())
                 .totalPlaylists(playlistRepository.count())
-                .mostFavoriteSong(favoriteRepository.findMostFavoriteSong().map(SongMapper::toResponse).orElse(null))
+                .mostFavoriteSong(favoriteRepository.findMostFavoriteSongId()
+                        .flatMap(songRepository::findById)
+                        .map(SongMapper::toResponse)
+                        .orElse(null))
                 .mostPlayedSong(songRepository.findFirstByOrderByPlayCountDesc().map(SongMapper::toResponse).orElse(null))
                 .build();
     }
