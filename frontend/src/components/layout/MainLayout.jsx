@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
@@ -9,13 +9,15 @@ import Footer from "./Footer";
 export default function MainLayout() {
   const [open, setOpen] = useState(false);
   const currentSong = useSelector((state) => state.player.currentSong);
+  const location = useLocation();
+  const isSongDetail = /^\/songs\/[^/]+$/.test(location.pathname);
   return (
     <div className="min-h-[100dvh] text-slate-50">
       <Sidebar open={open} onClose={() => setOpen(false)} />
       {open && <button className="fixed inset-0 z-30 bg-black/70 lg:hidden" onClick={() => setOpen(false)} aria-label="Close menu" />}
       <div className="lg:pl-64">
         <Header onMenu={() => setOpen(true)} />
-        <main className={`mx-auto min-h-[calc(100dvh-8rem)] max-w-7xl px-4 pt-6 lg:px-8 ${currentSong ? "pb-32" : "pb-8"}`}>
+        <main className={`mx-auto min-h-[calc(100dvh-8rem)] max-w-7xl px-4 pt-6 lg:px-8 ${currentSong && !isSongDetail ? "pb-32" : "pb-8"}`}>
           <Outlet />
           <Footer />
         </main>

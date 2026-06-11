@@ -1,31 +1,50 @@
 import { useEffect, useState } from "react";
-import { ChevronDown, Clock3, Disc3, MoreVertical, Music2 } from "lucide-react";
+import { ChevronDown, Clock3, Disc3, MoreVertical, Music2, Pause, Play, SkipBack, SkipForward } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { songApi } from "../../api/songApi";
 import Loading from "../../components/common/Loading";
+import Button from "../../components/common/Button";
 import FavoriteButton from "../../components/songs/FavoriteButton";
-import PlayButton from "../../components/songs/PlayButton";
+import { nextSong, previousSong, setCurrentSong, setProgress, setQueue, togglePlay } from "../../features/player/playerSlice";
 import { DEFAULT_IMAGE } from "../../utils/constants";
 
 export default function SongDetailPage() {
   const { id } = useParams();
+  const dispatch = useDispatch();
+  const { currentSong, isPlaying, progress, queue } = useSelector((state) => state.player);
   const [song, setSong] = useState(null);
-  const [queue, setQueue] = useState([]);
+  const [detailQueue, setDetailQueue] = useState([]);
 
   useEffect(() => {
     Promise.all([songApi.get(id), songApi.list({ size: 50 })])
       .then(([songData, songPage]) => {
+        const songs = songPage.content || [];
         setSong(songData);
-        setQueue(songPage.content || []);
+        setDetailQueue(songs);
+        dispatch(setQueue(songs.length ? songs : [songData]));
+        dispatch(setCurrentSong(songData));
       });
-  }, [id]);
+  }, [dispatch, id]);
 
   if (!song) return <Loading />;
 
   const cover = song.imageUrl || DEFAULT_IMAGE;
+  const playingSong = currentSong || song;
+  const playerCover = playingSong.imageUrl || DEFAULT_IMAGE;
   const subtitleParts = [song.artistName, song.albumTitle || song.genreName, song.duration].filter(Boolean);
   const description = song.description || "Một bài hát trong thư viện VietMusic.";
-  const relatedQueue = queue.length ? queue : [song];
+  const canSkip = queue.length > 1 || detailQueue.length > 1;
+
+  const handleNext = () => {
+    if (!canSkip) return;
+    dispatch(nextSong());
+  };
+
+  const handlePrevious = () => {
+    if (!canSkip) return;
+    dispatch(previousSong());
+  };
 
   return (
     <article className="relative -mx-4 overflow-hidden px-4 pb-8 pt-2 sm:mx-0 sm:px-0 md:pb-12">
@@ -43,7 +62,7 @@ export default function SongDetailPage() {
           </button>
           <div className="text-center">
             <p className="text-[0.7rem] font-bold uppercase tracking-[0.16em] text-slate-300">Đang phát</p>
-            <p className="max-w-44 truncate text-sm font-semibold">{song.artistName}</p>
+            <p className="max-w-44 truncate text-sm font-semibold">{playingSong.artistName || song.artistName}</p>
           </div>
           <button type="button" className="grid h-11 w-11 place-items-center rounded-full bg-white/8 transition hover:bg-white/14" aria-label="Tùy chọn">
             <MoreVertical size={24} />
@@ -84,7 +103,6 @@ export default function SongDetailPage() {
             </div>
 
             <div className="mt-8 flex items-center gap-3">
-              <PlayButton song={song} queue={relatedQueue} />
               <FavoriteButton songId={song.id} size="lg" />
             </div>
 
@@ -94,6 +112,24 @@ export default function SongDetailPage() {
             </div>
           </div>
         </div>
+
+        <section className="on-dark sticky bottom-4 z-30 mx-auto -mt-5 max-w-3xl overflow-hidden rounded-[1.6rem] border border-white/10 bg-[#05080c]/94 shadow-2xl shadow-black/40 backdrop-blur-xl md:bottom-6">
+          <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 py-3">
+            <img src={playerCover} alt={`Bìa bài hát ${playingSong.title}`} className="h-14 w-14 rounded-2xl object-cover ring-1 ring-white/10" />
+            <div className="min-w-0">
+              <p className="truncate text-sm font-bold text-white">{playingSong.title || song.title}</p>
+              <p className="truncate text-xs text-slate-400">{playingSong.artistName || song.artistName}</p>
+            </div>
+            <div className="flex items-center gap-1">
+              <Button variant="ghost" className="hidden h-11 w-11 px-0 sm:inline-flex" disabled={!canSkip} onClick={handlePrevious}><SkipBack size={22} /></Button>
+              <Button className="h-14 w-14 rounded-2xl px-0" onClick={() => dispatch(togglePlay())}>
+                {isPlaying ? <Pause size={27} /> : <Play size={27} />}
+              </Button>
+              <Button variant="ghost" className="hidden h-11 w-11 px-0 sm:inline-flex" disabled={!canSkip} onClick={handleNext}><SkipForward size={22} /></Button>
+            </div>
+          </div>
+          <input className="block h-1.5 w-full cursor-pointer accent-emerald-400" type="range" min="0" max="100" value={progress} onChange={(event) => dispatch(setProgress(Number(event.target.value)))} />
+        </section>
       </div>
     </article>
   );

@@ -13,6 +13,7 @@ export default function MusicPlayer() {
   const { currentSong, isPlaying, progress, volume, queue, currentIndex } = useSelector((state) => state.player);
   const audioRef = useRef(null);
   const [audioError, setAudioError] = useState("");
+  const isSongDetail = /^\/songs\/[^/]+$/.test(location.pathname);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -86,7 +87,7 @@ export default function MusicPlayer() {
   const hasAudio = Boolean(currentSong.audioUrl);
 
   return (
-    <div className="player-bar fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#080b10]/92 px-3 py-3 backdrop-blur-xl lg:left-64">
+    <>
       {hasAudio && (
         <audio
           ref={audioRef}
@@ -98,6 +99,8 @@ export default function MusicPlayer() {
           onError={handleAudioError}
         />
       )}
+      {!isSongDetail && (
+        <div className="player-bar fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#080b10]/92 px-3 py-3 backdrop-blur-xl lg:left-64">
       <div className="mx-auto grid max-w-7xl grid-cols-[1fr_auto] items-center gap-3 md:grid-cols-[1fr_auto_1fr]">
         <button
           type="button"
@@ -123,6 +126,8 @@ export default function MusicPlayer() {
         </div>
         <input className="col-span-2 h-1.5 w-full cursor-pointer accent-emerald-400 md:hidden" type="range" min="0" max="100" value={progress} disabled={!hasAudio} onChange={handleSeek} />
       </div>
-    </div>
+        </div>
+      )}
+    </>
   );
 }
