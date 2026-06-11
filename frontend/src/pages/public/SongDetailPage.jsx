@@ -71,7 +71,7 @@ export default function SongDetailPage() {
       />
       <div className="pointer-events-none absolute inset-x-[-12%] top-0 h-96 bg-gradient-to-b from-emerald-950/30 via-[#10151d]/45 to-transparent" />
 
-      <section className="app-surface on-dark relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] p-5 shadow-2xl shadow-black/25 sm:p-7 lg:p-9">
+      <section className="app-surface relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] p-5 shadow-2xl shadow-black/25 sm:p-7 lg:p-9">
         <div className="mb-6 flex items-center justify-between text-white/90 md:hidden">
           <button type="button" onClick={() => history.back()} className="grid h-11 w-11 place-items-center rounded-full bg-white/8 transition hover:bg-white/14" aria-label="Quay lại">
             <ChevronDown size={30} />
@@ -124,7 +124,7 @@ export default function SongDetailPage() {
               ))}
             </div>
 
-            <div className="mt-8 rounded-[1.5rem] border border-white/10 bg-[#05080c]/82 p-4 shadow-2xl shadow-black/25 sm:p-5">
+            <div className="song-detail-player mt-8 rounded-[1.5rem] border border-white/10 bg-[#05080c]/82 p-4 shadow-2xl shadow-black/25 sm:p-5">
               <input
                 className="block h-1.5 w-full cursor-pointer accent-emerald-400"
                 type="range"

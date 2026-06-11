@@ -149,6 +149,19 @@ html {
   color: #34d399;
 }
 
+.song-detail-player {
+  color: #f8fafc;
+}
+
+:root:not(.dark) .song-detail-player,
+:root:not(.dark) .song-detail-player .ui-button[data-variant="ghost"] {
+  color: #f8fafc !important;
+}
+
+:root:not(.dark) .song-detail-player .text-slate-500 {
+  color: #cbd5e1 !important;
+}
+
 :root:not(.dark) .badge {
   background-color: var(--light-primary-soft) !important;
   color: #007564 !important;
