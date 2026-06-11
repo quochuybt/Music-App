@@ -1,29 +1,34 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { albumApi } from "../../api/albumApi";
-import { artistApi } from "../../api/artistApi";
-import { genreApi } from "../../api/genreApi";
-import { songApi } from "../../api/songApi";
 import AlbumCard from "../../components/albums/AlbumCard";
 import ArtistCard from "../../components/artists/ArtistCard";
 import Badge from "../../components/common/Badge";
 import Button from "../../components/common/Button";
 import Loading from "../../components/common/Loading";
 import SongCard from "../../components/songs/SongCard";
+import { getCachedHomeData, loadHomeData } from "../../data/homeData";
+
+const emptyHomeData = { songs: [], albums: [], artists: [], genres: [] };
 
 export default function HomePage() {
-  const [data, setData] = useState({ songs: [], albums: [], artists: [], genres: [] });
-  const [loading, setLoading] = useState(true);
+  const cachedData = getCachedHomeData();
+  const [data, setData] = useState(cachedData || emptyHomeData);
+  const [loading, setLoading] = useState(!cachedData);
 
   useEffect(() => {
-    Promise.all([
-      songApi.list({ size: 8 }),
-      albumApi.list({ size: 4 }),
-      artistApi.list({ size: 4 }),
-      genreApi.list({ size: 8 }),
-    ]).then(([songs, albums, artists, genres]) => {
-      setData({ songs: songs.content || [], albums: albums.content || [], artists: artists.content || [], genres: genres.content || [] });
-    }).finally(() => setLoading(false));
+    let active = true;
+
+    loadHomeData()
+      .then((homeData) => {
+        if (active) setData(homeData);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   if (loading) return <Loading />;
