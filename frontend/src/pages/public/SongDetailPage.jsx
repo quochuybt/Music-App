@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ChevronDown, Heart, MoreHorizontal, Pause, Play, Repeat2, Share2, Shuffle, SkipBack, SkipForward } from "lucide-react";
+import { ChevronDown, Clock3, Disc3, MoreHorizontal, Pause, Play, Repeat2, Share2, Shuffle, SkipBack, SkipForward } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { songApi } from "../../api/songApi";
@@ -49,91 +49,113 @@ export default function SongDetailPage() {
   const durationSeconds = parseDuration(playingSong.duration || song.duration);
   const elapsed = durationSeconds * (Number(progress) / 100);
   const canSkip = queue.length > 1 || detailQueue.length > 1;
+  const meta = [song.albumTitle || song.genreName, song.duration].filter(Boolean);
 
   return (
-    <section className="relative -mx-4 -mt-6 min-h-[calc(100dvh-2rem)] overflow-hidden px-5 pb-8 pt-5 text-white sm:mx-0 sm:rounded-[2rem] md:mx-auto md:max-w-[34rem] md:px-7 md:shadow-2xl md:shadow-black/50">
+    <article className="relative -mx-4 overflow-hidden px-4 pb-8 pt-2 sm:mx-0 sm:px-0 md:pb-12">
       <div
-        className="absolute inset-0 scale-110 bg-cover bg-center blur-3xl"
-        style={{ backgroundImage: `url(${cover})` }}
+        className="pointer-events-none absolute inset-x-[-12%] top-[-8rem] h-[32rem] opacity-45 blur-3xl"
+        style={{ backgroundImage: `url(${cover})`, backgroundSize: "cover", backgroundPosition: "center" }}
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-[#121212]/88 to-[#121212]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_4%,rgb(255_255_255_/_0.10),transparent_26rem)]" />
+      <div className="pointer-events-none absolute inset-x-[-12%] top-0 h-96 bg-gradient-to-b from-emerald-950/30 via-[#10151d]/45 to-transparent" />
 
-      <div className="relative flex min-h-[calc(100dvh-4rem)] flex-col">
-        <header className="flex items-center justify-between py-2">
-          <button type="button" onClick={() => history.back()} className="grid h-12 w-12 place-items-center rounded-full text-white transition hover:bg-white/10" aria-label="Quay lại">
-            <ChevronDown size={34} />
+      <section className="app-surface on-dark relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] p-5 shadow-2xl shadow-black/25 sm:p-7 lg:p-9">
+        <div className="mb-6 flex items-center justify-between text-white/90 md:hidden">
+          <button type="button" onClick={() => history.back()} className="grid h-11 w-11 place-items-center rounded-full bg-white/8 transition hover:bg-white/14" aria-label="Quay lại">
+            <ChevronDown size={30} />
           </button>
           <div className="min-w-0 px-4 text-center">
-            <p className="text-[0.72rem] font-bold uppercase tracking-[0.16em] text-white/70">Đang phát từ thư viện</p>
-            <p className="truncate text-base font-extrabold text-white">{playingSong.artistName || song.artistName}</p>
+            <p className="text-[0.68rem] font-bold uppercase tracking-[0.16em] text-slate-300">Đang phát</p>
+            <p className="truncate text-sm font-semibold">{playingSong.artistName || song.artistName}</p>
           </div>
-          <button type="button" className="grid h-12 w-12 place-items-center rounded-full text-white transition hover:bg-white/10" aria-label="Tùy chọn">
-            <MoreHorizontal size={30} />
+          <button type="button" className="grid h-11 w-11 place-items-center rounded-full bg-white/8 transition hover:bg-white/14" aria-label="Tùy chọn">
+            <MoreHorizontal size={26} />
           </button>
-        </header>
+        </div>
 
-        <div className="flex flex-1 flex-col justify-center">
-          <div className="mx-auto mt-5 w-full max-w-[25rem] overflow-hidden rounded-xl bg-black shadow-[0_28px_90px_rgb(0_0_0_/_0.45)]">
-            <img src={cover} alt={`Bìa bài hát ${playingSong.title || song.title}`} className="aspect-square w-full object-cover" />
-          </div>
-
-          <div className="mt-9 flex items-center gap-4">
-            <div className="min-w-0 flex-1">
-              <h1 className="truncate text-[2rem] font-extrabold leading-none text-white sm:text-4xl">{playingSong.title || song.title}</h1>
-              <p className="mt-2 truncate text-xl font-semibold text-white/62">{playingSong.artistName || song.artistName}</p>
-            </div>
-            <FavoriteButton songId={song.id} size="lg" />
-          </div>
-
-          <div className="mt-8">
-            <input
-              className="block h-1.5 w-full cursor-pointer accent-white"
-              type="range"
-              min="0"
-              max="100"
-              value={progress}
-              onChange={(event) => dispatch(setProgress(Number(event.target.value)))}
-            />
-            <div className="mt-2 flex justify-between text-sm font-medium text-white/62">
-              <span>{formatSeconds(elapsed)}</span>
-              <span>{playingSong.duration || song.duration || formatSeconds(durationSeconds)}</span>
+        <div className="grid gap-8 lg:grid-cols-[minmax(280px,430px)_1fr] lg:items-center">
+          <div className="mx-auto w-full max-w-[27rem] lg:max-w-none">
+            <div className="overflow-hidden rounded-[1.35rem] bg-black shadow-[0_28px_90px_rgb(0_0_0_/_0.42)] ring-1 ring-white/10">
+              <img src={cover} alt={`Bìa bài hát ${playingSong.title || song.title}`} className="aspect-square w-full object-cover" />
             </div>
           </div>
 
-          <div className="mt-8 flex items-center justify-between">
-            <button type="button" className="text-emerald-400 transition hover:scale-105" aria-label="Trộn bài">
-              <Shuffle size={30} />
-            </button>
-            <Button variant="ghost" className="h-14 w-14 px-0 text-white/72" disabled={!canSkip} onClick={() => dispatch(previousSong())}>
-              <SkipBack size={34} fill="currentColor" />
-            </Button>
-            <button
-              type="button"
-              onClick={() => dispatch(togglePlay())}
-              className="grid h-20 w-20 place-items-center rounded-full bg-white text-black shadow-2xl shadow-black/35 transition hover:scale-105 active:scale-95"
-              aria-label={isPlaying ? "Tạm dừng" : "Phát"}
-            >
-              {isPlaying ? <Pause size={40} fill="currentColor" /> : <Play size={40} fill="currentColor" className="translate-x-0.5" />}
-            </button>
-            <Button variant="ghost" className="h-14 w-14 px-0 text-white/72" disabled={!canSkip} onClick={() => dispatch(nextSong())}>
-              <SkipForward size={34} fill="currentColor" />
-            </Button>
-            <button type="button" className="text-white/72 transition hover:scale-105 hover:text-white" aria-label="Lặp lại">
-              <Repeat2 size={30} />
-            </button>
-          </div>
+          <div className="min-w-0">
+            <div className="hidden items-center gap-3 md:flex">
+              <span className="grid h-11 w-11 place-items-center rounded-2xl bg-emerald-400/12 text-emerald-300 ring-1 ring-emerald-300/20">
+                <Disc3 size={21} />
+              </span>
+              <p className="page-kicker">Bài hát</p>
+            </div>
 
-          <div className="mt-9 flex items-center justify-between text-white/82">
-            <button type="button" className="grid h-12 w-12 place-items-center rounded-full transition hover:bg-white/10" aria-label="Yêu thích">
-              <Heart size={28} />
-            </button>
-            <button type="button" className="grid h-12 w-12 place-items-center rounded-full transition hover:bg-white/10" aria-label="Chia sẻ">
-              <Share2 size={27} />
-            </button>
+            <h1 className="mt-2 text-balance text-5xl font-black leading-[0.95] text-white sm:text-6xl xl:text-7xl">{playingSong.title || song.title}</h1>
+            <p className="mt-4 text-xl font-extrabold text-slate-200">{playingSong.artistName || song.artistName}</p>
+            <p className="mt-2 max-w-2xl text-base leading-7 text-slate-400">{song.description || "Một bài hát trong thư viện VietMusic."}</p>
+
+            <div className="mt-6 flex flex-wrap gap-3 text-sm font-semibold text-slate-200">
+              {meta.map((item) => (
+                <span key={item} className="inline-flex items-center gap-2 rounded-full bg-white/8 px-4 py-2 ring-1 ring-white/10">
+                  {item === song.duration ? <Clock3 size={17} className="text-emerald-300" /> : <Disc3 size={17} className="text-emerald-300" />}
+                  {item}
+                </span>
+              ))}
+            </div>
+
+            <div className="mt-7 flex items-center gap-3">
+              <FavoriteButton songId={song.id} size="lg" />
+              <button type="button" className="grid h-12 w-12 place-items-center rounded-2xl bg-white/6 text-white/80 transition hover:bg-white/10 hover:text-white" aria-label="Chia sẻ">
+                <Share2 size={22} />
+              </button>
+            </div>
+
+            <div className="mt-8 rounded-[1.5rem] border border-white/10 bg-[#05080c]/82 p-4 shadow-2xl shadow-black/25 sm:p-5">
+              <div className="mb-4 flex items-center gap-3">
+                <img src={cover} alt={`Bìa bài hát ${playingSong.title || song.title}`} className="h-14 w-14 rounded-2xl object-cover ring-1 ring-white/10" />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-extrabold text-white">{playingSong.title || song.title}</p>
+                  <p className="truncate text-xs font-medium text-slate-400">{playingSong.artistName || song.artistName}</p>
+                </div>
+              </div>
+
+              <input
+                className="block h-1.5 w-full cursor-pointer accent-emerald-400"
+                type="range"
+                min="0"
+                max="100"
+                value={progress}
+                onChange={(event) => dispatch(setProgress(Number(event.target.value)))}
+              />
+              <div className="mt-2 flex justify-between text-xs font-semibold text-slate-500">
+                <span>{formatSeconds(elapsed)}</span>
+                <span>{playingSong.duration || song.duration || formatSeconds(durationSeconds)}</span>
+              </div>
+
+              <div className="mt-5 flex items-center justify-between">
+                <button type="button" className="text-emerald-400 transition hover:scale-105" aria-label="Trộn bài">
+                  <Shuffle size={25} />
+                </button>
+                <Button variant="ghost" className="h-12 w-12 px-0 text-white/72" disabled={!canSkip} onClick={() => dispatch(previousSong())}>
+                  <SkipBack size={29} fill="currentColor" />
+                </Button>
+                <button
+                  type="button"
+                  onClick={() => dispatch(togglePlay())}
+                  className="grid h-16 w-16 place-items-center rounded-full bg-emerald-400 text-black shadow-xl shadow-emerald-950/40 transition hover:scale-105 active:scale-95"
+                  aria-label={isPlaying ? "Tạm dừng" : "Phát"}
+                >
+                  {isPlaying ? <Pause size={33} fill="currentColor" /> : <Play size={33} fill="currentColor" className="translate-x-0.5" />}
+                </button>
+                <Button variant="ghost" className="h-12 w-12 px-0 text-white/72" disabled={!canSkip} onClick={() => dispatch(nextSong())}>
+                  <SkipForward size={29} fill="currentColor" />
+                </Button>
+                <button type="button" className="text-white/65 transition hover:scale-105 hover:text-white" aria-label="Lặp lại">
+                  <Repeat2 size={25} />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </article>
   );
 }
