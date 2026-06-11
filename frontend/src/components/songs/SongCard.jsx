@@ -1,23 +1,23 @@
-import { Link, useNavigate } from "react-router-dom";
 import { DEFAULT_IMAGE } from "../../utils/constants";
+import { usePlayer } from "../../hooks/usePlayer";
 import FavoriteButton from "./FavoriteButton";
 import PlayButton from "./PlayButton";
 
 export default function SongCard({ song, queue = [], compactMobile = false }) {
-  const navigate = useNavigate();
-  const openDetail = () => navigate(`/songs/${song.id}`);
+  const { play } = usePlayer();
+  const playSong = () => play(song, queue);
   const stopActionClick = (event) => event.stopPropagation();
 
   if (compactMobile) {
     return (
       <article
-        role="link"
+        role="button"
         tabIndex={0}
-        onClick={openDetail}
+        onClick={playSong}
         onKeyDown={(event) => {
           if (event.key === "Enter" || event.key === " ") {
             event.preventDefault();
-            openDetail();
+            playSong();
           }
         }}
         className="group flex cursor-pointer items-center gap-3 rounded-2xl bg-white/[0.04] p-2 ring-1 ring-white/10 transition duration-300 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-emerald-300/70 sm:block sm:p-2"
@@ -31,7 +31,7 @@ export default function SongCard({ song, queue = [], compactMobile = false }) {
           </div>
         </div>
         <div className="min-w-0 flex-1 px-0 py-1 sm:px-1 sm:pb-2 sm:pt-3">
-          <Link to={`/songs/${song.id}`} onClick={stopActionClick} className="block truncate text-sm font-semibold text-white transition hover:text-emerald-200 sm:text-base">{song.title}</Link>
+          <p className="truncate text-sm font-semibold text-white transition group-hover:text-emerald-200 sm:text-base">{song.title}</p>
           <p className="truncate text-xs text-slate-400 sm:text-sm">{song.artistName || "VietMusic"} {song.duration ? `• ${song.duration}` : ""}</p>
         </div>
         <div className="flex shrink-0 items-center gap-2 sm:hidden" onClick={stopActionClick}>
@@ -44,13 +44,13 @@ export default function SongCard({ song, queue = [], compactMobile = false }) {
 
   return (
     <article
-      role="link"
+      role="button"
       tabIndex={0}
-      onClick={openDetail}
+      onClick={playSong}
       onKeyDown={(event) => {
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
-          openDetail();
+          playSong();
         }
       }}
       className="group cursor-pointer rounded-2xl bg-white/[0.04] p-2 ring-1 ring-white/10 transition duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-emerald-300/70"
@@ -64,7 +64,7 @@ export default function SongCard({ song, queue = [], compactMobile = false }) {
         </div>
       </div>
       <div className="px-1 pb-2 pt-3">
-        <Link to={`/songs/${song.id}`} onClick={stopActionClick} className="block truncate font-semibold text-white transition hover:text-emerald-200">{song.title}</Link>
+        <p className="truncate font-semibold text-white transition group-hover:text-emerald-200">{song.title}</p>
         <p className="truncate text-sm text-slate-400">{song.artistName || "VietMusic"} {song.duration ? `• ${song.duration}` : ""}</p>
       </div>
     </article>

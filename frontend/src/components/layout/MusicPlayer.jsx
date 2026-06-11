@@ -78,6 +78,10 @@ export default function MusicPlayer() {
     syncDetailRoute(previous);
   };
 
+  const openCurrentSongDetail = () => {
+    if (currentSong?.id) navigate(`/songs/${currentSong.id}`);
+  };
+
   if (!currentSong) return null;
   const hasAudio = Boolean(currentSong.audioUrl);
 
@@ -95,13 +99,18 @@ export default function MusicPlayer() {
         />
       )}
       <div className="mx-auto grid max-w-7xl grid-cols-[1fr_auto] items-center gap-3 md:grid-cols-[1fr_auto_1fr]">
-        <div className="flex min-w-0 items-center gap-3">
+        <button
+          type="button"
+          onClick={openCurrentSongDetail}
+          className="flex min-w-0 items-center gap-3 rounded-2xl text-left transition hover:bg-white/[0.04] focus:outline-none focus:ring-2 focus:ring-emerald-300/70"
+          title="Mở trang chi tiết bài hát"
+        >
           <img src={currentSong.imageUrl || DEFAULT_IMAGE} alt={currentSong.title || "Ảnh bài hát"} className="h-13 w-13 rounded-2xl object-cover ring-1 ring-white/10" />
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold text-white">{currentSong.title || "Chọn một bài hát"}</p>
             <p className="truncate text-xs text-slate-400">{audioError || (hasAudio ? currentSong.artistName : "Bài hát này chưa có file audio")}</p>
           </div>
-        </div>
+        </button>
         <div className="flex items-center gap-2">
           <Button variant="ghost" className="h-12 w-12 px-0" onClick={handlePreviousSong}><SkipBack size={24} /></Button>
           <Button className="h-14 w-14 rounded-full px-0" disabled={!hasAudio} onClick={() => dispatch(togglePlay())}>{isPlaying ? <Pause size={26} /> : <Play size={26} />}</Button>
