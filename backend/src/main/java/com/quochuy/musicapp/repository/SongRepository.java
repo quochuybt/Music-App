@@ -78,6 +78,35 @@ public interface SongRepository extends JpaRepository<Song, Long> {
             """)
     Optional<SongResponse> findResponseByIdAndStatus(@Param("id") Long id, @Param("status") CommonStatus status);
 
+    @Query(value = """
+            select new com.quochuy.musicapp.dto.response.SongResponse(
+                s.id, s.title, s.imageUrl, s.audioUrl, s.duration, s.description,
+                ar.id, ar.name, a.id, a.title, g.id, g.name, s.status, s.playCount
+            )
+            from Favorite f
+            join f.song s
+            join s.artist ar
+            join s.genre g
+            left join s.album a
+            group by s.id, s.title, s.imageUrl, s.audioUrl, s.duration, s.description,
+                     ar.id, ar.name, a.id, a.title, g.id, g.name, s.status, s.playCount
+            order by count(f.user.id) desc
+            """)
+    Page<SongResponse> findMostFavoriteResponses(Pageable pageable);
+
+    @Query("""
+            select new com.quochuy.musicapp.dto.response.SongResponse(
+                s.id, s.title, s.imageUrl, s.audioUrl, s.duration, s.description,
+                ar.id, ar.name, a.id, a.title, g.id, g.name, s.status, s.playCount
+            )
+            from Song s
+            join s.artist ar
+            join s.genre g
+            left join s.album a
+            order by s.playCount desc
+            """)
+    Page<SongResponse> findMostPlayedResponses(Pageable pageable);
+
     Optional<Song> findByIdAndStatus(Long id, CommonStatus status);
     Page<Song> findByArtistIdAndStatus(Long artistId, CommonStatus status, Pageable pageable);
     Page<Song> findByAlbumIdAndStatus(Long albumId, CommonStatus status, Pageable pageable);

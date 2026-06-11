@@ -19,8 +19,7 @@ public class HistoryService {
 
     @Transactional(readOnly = true)
     public List<SongResponse> mine() {
-        return historyRepository.findByUserIdOrderByListenedAtDesc(currentUserService.get().getId()).stream()
-                .map(ListeningHistory::getSong).map(SongMapper::toResponse).toList();
+        return historyRepository.findSongResponsesByUserIdOrderByListenedAtDesc(currentUserService.get().getId());
     }
     @Transactional
     public SongResponse savePlay(Long songId) {

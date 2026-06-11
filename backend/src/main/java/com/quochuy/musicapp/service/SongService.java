@@ -27,7 +27,7 @@ public class SongService {
         return songRepository.searchResponses(CommonStatus.ACTIVE, artistId, albumId, genreId, blankToNull(keyword), newestFirst(pageable));
     }
     @Transactional(readOnly = true)
-    public Page<SongResponse> adminList(Pageable pageable) { return songRepository.findAll(newestFirst(pageable)).map(SongMapper::toResponse); }
+    public Page<SongResponse> adminList(Pageable pageable) { return songRepository.searchResponses(null, null, null, null, null, newestFirst(pageable)); }
     @Transactional(readOnly = true)
     public Page<SongResponse> byArtist(Long id, Pageable pageable) { return songRepository.searchResponses(CommonStatus.ACTIVE, id, null, null, null, newestFirst(pageable)); }
     @Transactional(readOnly = true)

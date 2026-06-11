@@ -7,11 +7,12 @@ import Badge from "../../components/common/Badge";
 import Button from "../../components/common/Button";
 import ConfirmDialog from "../../components/common/ConfirmDialog";
 import DataTable from "../../components/admin/DataTable";
+import Pagination from "../../components/common/Pagination";
 
 export default function AdminSongsPage() {
   const [page, setPage] = useState(null);
   const [deleting, setDeleting] = useState(null);
-  const load = () => adminApi.songs.list({ size: 100 }).then(setPage);
+  const load = (number = 0) => adminApi.songs.list({ page: number, size: 10 }).then(setPage);
   useEffect(() => { load(); }, []);
   const remove = async () => {
     try {
@@ -42,6 +43,7 @@ export default function AdminSongsPage() {
         { key: "status", header: "Trạng thái", render: (r) => <button onClick={() => toggle(r)}><Badge tone={r.status === "ACTIVE" ? "green" : "red"}>{r.status}</Badge></button> },
         { key: "actions", header: "", render: (r) => <div className="flex justify-end gap-2"><Link to={`/admin/songs/edit/${r.id}`}><Button variant="secondary" className="h-11 w-11 px-0" title="Sửa"><Edit size={20} /></Button></Link><Button variant="dangerGhost" className="h-11 w-11 px-0" title="Xóa" onClick={() => setDeleting(r)}><Trash2 size={20} /></Button></div> },
       ]} />
+      <Pagination page={page} onPage={load} />
       <ConfirmDialog open={Boolean(deleting)} message={`Xóa bài hát ${deleting?.title}?`} onCancel={() => setDeleting(null)} onConfirm={remove} />
     </div>
   );

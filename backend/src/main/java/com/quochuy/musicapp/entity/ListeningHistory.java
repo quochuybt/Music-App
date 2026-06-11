@@ -5,7 +5,10 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor
-@Entity @Table(name = "listening_history", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "song_id"}))
+@Entity
+@Table(name = "listening_history",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "song_id"}),
+        indexes = @Index(name = "idx_history_user_listened_at", columnList = "user_id, listened_at"))
 public class ListeningHistory {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
