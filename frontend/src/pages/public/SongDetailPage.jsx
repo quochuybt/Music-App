@@ -96,23 +96,24 @@ export default function SongDetailPage() {
           </div>
 
           <div className="min-w-0">
-            <div className="hidden items-center gap-3 md:flex">
-              <span className="grid h-11 w-11 place-items-center rounded-2xl bg-emerald-400/12 text-emerald-300 ring-1 ring-emerald-300/20">
-                <Disc3 size={21} />
-              </span>
-              <p className="page-kicker">Bài hát</p>
+            <div className="hidden items-center justify-between gap-4 md:flex">
+              <div className="flex items-center gap-3">
+                <span className="grid h-11 w-11 place-items-center rounded-2xl bg-emerald-400/12 text-emerald-300 ring-1 ring-emerald-300/20">
+                  <Disc3 size={21} />
+                </span>
+                <p className="page-kicker">Bài hát</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <FavoriteButton songId={song.id} size="lg" />
+                <button type="button" onClick={() => setPlaylistOpen(true)} className="grid h-12 w-12 place-items-center rounded-full bg-white/8 text-white/80 ring-1 ring-white/10 transition hover:bg-white/12 hover:text-white" aria-label="Thêm vào playlist">
+                  <ListPlus size={26} />
+                </button>
+              </div>
             </div>
 
             <h1 className="mt-2 text-balance text-5xl font-black leading-[0.95] text-white sm:text-6xl xl:text-7xl">{playingSong.title || song.title}</h1>
             <p className="mt-4 text-xl font-extrabold text-slate-200">{playingSong.artistName || song.artistName}</p>
             {hasDescription && <p className="mt-2 max-w-2xl text-base leading-7 text-slate-400">{song.description}</p>}
-
-            <div className="mt-6 hidden items-center gap-3 md:flex">
-              <FavoriteButton songId={song.id} size="lg" />
-              <button type="button" onClick={() => setPlaylistOpen(true)} className="grid h-12 w-12 place-items-center rounded-full bg-white/8 text-white/80 ring-1 ring-white/10 transition hover:bg-white/12 hover:text-white" aria-label="Thêm vào playlist">
-                <ListPlus size={26} />
-              </button>
-            </div>
 
             <div className="mt-5 flex flex-wrap items-center gap-3 text-sm font-semibold text-slate-200">
               {meta.map((item) => (
