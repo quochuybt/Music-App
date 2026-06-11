@@ -14,6 +14,7 @@ import SongCard from "../../components/songs/SongCard";
 export default function HomePage() {
   const [data, setData] = useState({ songs: [], albums: [], artists: [], genres: [] });
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     Promise.all([
       songApi.list({ size: 8 }),
@@ -64,14 +65,26 @@ export default function HomePage() {
 
       <Section title="Bài hát nổi bật" to="/songs"><Grid>{data.songs.map((song) => <SongCard key={song.id} song={song} queue={data.songs} compactMobile />)}</Grid></Section>
       <Section title="Album mới" to="/albums"><Grid>{data.albums.map((album) => <AlbumCard key={album.id} album={album} />)}</Grid></Section>
-      <Section title="Ca sĩ được nghe nhiều" to="/artists"><Grid>{data.artists.map((artist) => <ArtistCard key={artist.id} artist={artist} />)}</Grid></Section>
+      <Section title="Ca sĩ được nghe nhiều" to="/artists"><Grid scrollMobile>{data.artists.map((artist) => <ArtistCard key={artist.id} artist={artist} />)}</Grid></Section>
     </div>
   );
 }
 
 function Section({ title, to, children }) {
-  return <section><div className="mb-4 flex items-end justify-between gap-4"><h2 className="text-2xl font-bold text-white">{title}</h2><Link className="text-sm font-semibold text-emerald-300 transition hover:text-emerald-100" to={to}>Xem tất cả</Link></div>{children}</section>;
+  return (
+    <section>
+      <div className="mb-4 flex items-end justify-between gap-4">
+        <h2 className="text-2xl font-bold text-white">{title}</h2>
+        <Link className="text-sm font-semibold text-emerald-300 transition hover:text-emerald-100" to={to}>Xem tất cả</Link>
+      </div>
+      {children}
+    </section>
+  );
 }
-function Grid({ children }) {
+
+function Grid({ children, scrollMobile = false }) {
+  if (scrollMobile) {
+    return <div className="-mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4">{children}</div>;
+  }
   return <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{children}</div>;
 }
