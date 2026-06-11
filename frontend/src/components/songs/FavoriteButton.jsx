@@ -1,5 +1,5 @@
 import { Heart } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { favoriteApi } from "../../api/favoriteApi";
 import { useAuth } from "../../hooks/useAuth";
@@ -9,9 +9,11 @@ export default function FavoriteButton({ songId, size = "md" }) {
   const { isAuthenticated } = useAuth();
   const [active, setActive] = useState(false);
   const [loading, setLoading] = useState(false);
+  const actionVersionRef = useRef(0);
 
   useEffect(() => {
     let cancelled = false;
+    const checkVersion = actionVersionRef.current;
 
     if (!isAuthenticated || !songId) {
       return undefined;
@@ -20,10 +22,10 @@ export default function FavoriteButton({ songId, size = "md" }) {
     favoriteApi
       .check(songId)
       .then((isFavorite) => {
-        if (!cancelled) setActive(Boolean(isFavorite));
+        if (!cancelled && actionVersionRef.current === checkVersion) setActive(Boolean(isFavorite));
       })
       .catch(() => {
-        if (!cancelled) setActive(false);
+        if (!cancelled && actionVersionRef.current === checkVersion) setActive(false);
       });
 
     return () => {
@@ -36,6 +38,7 @@ export default function FavoriteButton({ songId, size = "md" }) {
     if (loading || !songId) return;
 
     const previous = isAuthenticated && active;
+    actionVersionRef.current += 1;
     setLoading(true);
     setActive(!previous);
 
