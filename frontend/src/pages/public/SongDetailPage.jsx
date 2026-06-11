@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
-import { ChevronDown, Clock3, Disc3, MoreHorizontal, Pause, Play, Repeat2, Share2, Shuffle, SkipBack, SkipForward } from "lucide-react";
+import { ChevronDown, Clock3, Disc3, ListPlus, Pause, Play, Repeat2, Shuffle, SkipBack, SkipForward } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { playlistApi } from "../../api/playlistApi";
 import { songApi } from "../../api/songApi";
 import Loading from "../../components/common/Loading";
 import Button from "../../components/common/Button";
+import AddToPlaylistModal from "../../components/playlist/AddToPlaylistModal";
 import FavoriteButton from "../../components/songs/FavoriteButton";
 import { nextSong, previousSong, setCurrentSong, setProgress, setQueue, togglePlay } from "../../features/player/playerSlice";
+import { useAuth } from "../../hooks/useAuth";
 import { DEFAULT_IMAGE } from "../../utils/constants";
 
 const parseDuration = (duration = "") => {
@@ -27,9 +30,12 @@ const formatSeconds = (seconds) => {
 export default function SongDetailPage() {
   const { id } = useParams();
   const dispatch = useDispatch();
+  const { isAuthenticated } = useAuth();
   const { currentSong, isPlaying, progress, queue } = useSelector((state) => state.player);
   const [song, setSong] = useState(null);
   const [detailQueue, setDetailQueue] = useState([]);
+  const [playlists, setPlaylists] = useState([]);
+  const [playlistOpen, setPlaylistOpen] = useState(false);
 
   useEffect(() => {
     Promise.all([songApi.get(id), songApi.list({ size: 50 })])
@@ -42,6 +48,11 @@ export default function SongDetailPage() {
       });
   }, [dispatch, id]);
 
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    playlistApi.list().then(setPlaylists).catch(() => setPlaylists([]));
+  }, [isAuthenticated]);
+
   if (!song) return <Loading />;
 
   const playingSong = currentSong || song;
@@ -50,6 +61,7 @@ export default function SongDetailPage() {
   const elapsed = durationSeconds * (Number(progress) / 100);
   const canSkip = queue.length > 1 || detailQueue.length > 1;
   const meta = [song.albumTitle || song.genreName, song.duration].filter(Boolean);
+  const hasDescription = Boolean(song.description?.trim());
 
   return (
     <article className="relative -mx-4 overflow-hidden px-4 pb-8 pt-2 sm:mx-0 sm:px-0 md:pb-12">
@@ -68,9 +80,12 @@ export default function SongDetailPage() {
             <p className="text-[0.68rem] font-bold uppercase tracking-[0.16em] text-slate-300">Đang phát</p>
             <p className="truncate text-sm font-semibold">{playingSong.artistName || song.artistName}</p>
           </div>
-          <button type="button" className="grid h-11 w-11 place-items-center rounded-full bg-white/8 transition hover:bg-white/14" aria-label="Tùy chọn">
-            <MoreHorizontal size={26} />
-          </button>
+          <div className="flex items-center gap-2">
+            <FavoriteButton songId={song.id} size="sm" />
+            <button type="button" onClick={() => setPlaylistOpen(true)} className="grid h-9 w-9 place-items-center rounded-full bg-white/8 text-white transition hover:bg-white/14" aria-label="Thêm vào playlist">
+              <ListPlus size={19} />
+            </button>
+          </div>
         </div>
 
         <div className="grid gap-8 lg:grid-cols-[minmax(280px,430px)_1fr] lg:items-center">
@@ -90,33 +105,24 @@ export default function SongDetailPage() {
 
             <h1 className="mt-2 text-balance text-5xl font-black leading-[0.95] text-white sm:text-6xl xl:text-7xl">{playingSong.title || song.title}</h1>
             <p className="mt-4 text-xl font-extrabold text-slate-200">{playingSong.artistName || song.artistName}</p>
-            <p className="mt-2 max-w-2xl text-base leading-7 text-slate-400">{song.description || "Một bài hát trong thư viện VietMusic."}</p>
+            {hasDescription && <p className="mt-2 max-w-2xl text-base leading-7 text-slate-400">{song.description}</p>}
 
-            <div className="mt-6 flex flex-wrap gap-3 text-sm font-semibold text-slate-200">
+            <div className="mt-6 flex flex-wrap items-center gap-3 text-sm font-semibold text-slate-200">
               {meta.map((item) => (
                 <span key={item} className="inline-flex items-center gap-2 rounded-full bg-white/8 px-4 py-2 ring-1 ring-white/10">
                   {item === song.duration ? <Clock3 size={17} className="text-emerald-300" /> : <Disc3 size={17} className="text-emerald-300" />}
                   {item}
                 </span>
               ))}
-            </div>
-
-            <div className="mt-7 flex items-center gap-3">
-              <FavoriteButton songId={song.id} size="lg" />
-              <button type="button" className="grid h-12 w-12 place-items-center rounded-2xl bg-white/6 text-white/80 transition hover:bg-white/10 hover:text-white" aria-label="Chia sẻ">
-                <Share2 size={22} />
-              </button>
+              <div className="hidden items-center gap-2 md:flex">
+                <FavoriteButton songId={song.id} />
+                <button type="button" onClick={() => setPlaylistOpen(true)} className="grid h-11 w-11 place-items-center rounded-full bg-white/8 text-white/80 ring-1 ring-white/10 transition hover:bg-white/12 hover:text-white" aria-label="Thêm vào playlist">
+                  <ListPlus size={21} />
+                </button>
+              </div>
             </div>
 
             <div className="mt-8 rounded-[1.5rem] border border-white/10 bg-[#05080c]/82 p-4 shadow-2xl shadow-black/25 sm:p-5">
-              <div className="mb-4 flex items-center gap-3">
-                <img src={cover} alt={`Bìa bài hát ${playingSong.title || song.title}`} className="h-14 w-14 rounded-2xl object-cover ring-1 ring-white/10" />
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-extrabold text-white">{playingSong.title || song.title}</p>
-                  <p className="truncate text-xs font-medium text-slate-400">{playingSong.artistName || song.artistName}</p>
-                </div>
-              </div>
-
               <input
                 className="block h-1.5 w-full cursor-pointer accent-emerald-400"
                 type="range"
@@ -156,6 +162,8 @@ export default function SongDetailPage() {
           </div>
         </div>
       </section>
+
+      <AddToPlaylistModal open={playlistOpen} onClose={() => setPlaylistOpen(false)} song={song} playlists={playlists} />
     </article>
   );
 }
