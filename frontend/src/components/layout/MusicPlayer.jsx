@@ -1,5 +1,5 @@
 import { Pause, Play, SkipBack, SkipForward, Volume2 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { audioFailed, nextSong, previousSong, seekToProgress, setProgress, setVolume, togglePlay } from "../../features/player/playerSlice";
@@ -67,23 +67,66 @@ export default function MusicPlayer() {
     dispatch(audioFailed());
   };
 
-  const syncDetailRoute = (song) => {
+  const syncDetailRoute = useCallback((song) => {
     if (song?.id && /^\/songs\/[^/]+$/.test(location.pathname)) {
       navigate(`/songs/${song.id}`);
     }
-  };
+  }, [location.pathname, navigate]);
 
-  const handleNextSong = () => {
+  const handleNextSong = useCallback(() => {
     const next = queue.length ? queue[(currentIndex + 1) % queue.length] : currentSong;
     dispatch(nextSong());
     syncDetailRoute(next);
-  };
+  }, [currentIndex, currentSong, dispatch, queue, syncDetailRoute]);
 
-  const handlePreviousSong = () => {
+  const handlePreviousSong = useCallback(() => {
     const previous = queue.length ? queue[currentIndex === 0 ? queue.length - 1 : currentIndex - 1] : currentSong;
     dispatch(previousSong());
     syncDetailRoute(previous);
-  };
+  }, [currentIndex, currentSong, dispatch, queue, syncDetailRoute]);
+
+  useEffect(() => {
+    if (!currentSong || !("mediaSession" in navigator) || !window.MediaMetadata) return;
+
+    const artworkSrc = currentSong.imageUrl || DEFAULT_IMAGE;
+    navigator.mediaSession.metadata = new window.MediaMetadata({
+      title: currentSong.title || "VietMusic",
+      artist: currentSong.artistName || "",
+      album: currentSong.albumTitle || "VietMusic",
+      artwork: artworkSrc ? [{ src: artworkSrc, sizes: "512x512", type: "image/png" }] : [],
+    });
+    navigator.mediaSession.playbackState = isPlaying ? "playing" : "paused";
+
+    const setActionHandler = (action, handler) => {
+      try {
+        navigator.mediaSession.setActionHandler(action, handler);
+      } catch {
+        // Some browsers expose Media Session but not every action.
+      }
+    };
+
+    setActionHandler("play", () => {
+      if (!isPlaying) dispatch(togglePlay());
+    });
+    setActionHandler("pause", () => {
+      if (isPlaying) dispatch(togglePlay());
+    });
+    setActionHandler("previoustrack", handlePreviousSong);
+    setActionHandler("nexttrack", handleNextSong);
+    setActionHandler("seekbackward", () => {
+      const audio = audioRef.current;
+      if (audio?.duration) audio.currentTime = Math.max(0, audio.currentTime - 10);
+    });
+    setActionHandler("seekforward", () => {
+      const audio = audioRef.current;
+      if (audio?.duration) audio.currentTime = Math.min(audio.duration, audio.currentTime + 10);
+    });
+    setActionHandler("seekto", (details) => {
+      const audio = audioRef.current;
+      if (!audio || typeof details.seekTime !== "number") return;
+      audio.currentTime = Math.min(audio.duration || details.seekTime, Math.max(0, details.seekTime));
+    });
+  }, [currentSong, dispatch, handleNextSong, handlePreviousSong, isPlaying]);
 
   const handleEnded = () => {
     const audio = audioRef.current;
