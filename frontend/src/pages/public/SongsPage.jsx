@@ -45,7 +45,13 @@ export default function SongsPage() {
       <SongFilter filters={filters} setFilters={setFilters} {...lists} />
       <SongList songs={page?.content || []} loading={loading} onAddToPlaylist={(song) => setModalSong(song)} />
       <Pagination page={page} onPage={load} />
-      <AddToPlaylistModal open={Boolean(modalSong)} song={modalSong} playlists={lists.playlists} onClose={() => setModalSong(null)} />
+      <AddToPlaylistModal
+        open={Boolean(modalSong)}
+        song={modalSong}
+        playlists={lists.playlists}
+        onClose={() => setModalSong(null)}
+        onCreated={(playlist) => setLists((current) => ({ ...current, playlists: [playlist, ...current.playlists] }))}
+      />
     </div>
   );
 }
