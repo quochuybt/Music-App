@@ -65,7 +65,7 @@ export default function HomePage() {
 
       <Section title="Bài hát nổi bật" to="/songs"><Grid>{data.songs.map((song) => <SongCard key={song.id} song={song} queue={data.songs} compactMobile />)}</Grid></Section>
       <Section title="Album mới" to="/albums"><Grid>{data.albums.map((album) => <AlbumCard key={album.id} album={album} />)}</Grid></Section>
-      <Section title="Ca sĩ được nghe nhiều" to="/artists"><Grid scrollMobile>{data.artists.map((artist) => <ArtistCard key={artist.id} artist={artist} />)}</Grid></Section>
+      <Section title="Ca sĩ được nghe nhiều" to="/artists"><Grid scrollMobile>{data.artists.map((artist) => <ArtistCard key={artist.id} artist={artist} scrollMobile />)}</Grid></Section>
     </div>
   );
 }

@@ -12,10 +12,10 @@ export default function MainLayout() {
   const location = useLocation();
   const isSongDetail = /^\/songs\/[^/]+$/.test(location.pathname);
   return (
-    <div className="min-h-[100dvh] text-slate-50">
+    <div className="min-h-[100dvh] overflow-x-hidden text-slate-50">
       <Sidebar open={open} onClose={() => setOpen(false)} />
       {open && <button className="fixed inset-0 z-30 bg-black/70 lg:hidden" onClick={() => setOpen(false)} aria-label="Close menu" />}
-      <div className="lg:pl-64">
+      <div className="min-w-0 lg:pl-64">
         <Header onMenu={() => setOpen(true)} />
         <main className={`mx-auto min-h-[calc(100dvh-8rem)] max-w-7xl px-4 pt-6 lg:px-8 ${currentSong && !isSongDetail ? "pb-32" : "pb-8"}`}>
           <Outlet />
