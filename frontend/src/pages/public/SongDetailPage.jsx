@@ -70,7 +70,7 @@ export default function SongDetailPage() {
   );
 
   return (
-    <article className="relative -mx-4 overflow-hidden px-4 pb-8 pt-2 sm:mx-0 sm:px-0 md:pb-12">
+    <article className="relative -mx-4 overflow-visible px-4 pb-8 pt-2 sm:mx-0 sm:px-0 md:pb-12">
       <div className="pointer-events-none absolute inset-x-0 top-0 mx-auto hidden h-[28rem] max-w-7xl overflow-hidden rounded-[2.25rem] dark:block">
         <div
           className="absolute inset-x-[-12%] top-[-8rem] h-[32rem] opacity-45 blur-3xl"
@@ -79,7 +79,7 @@ export default function SongDetailPage() {
         <div className="absolute inset-0 bg-gradient-to-b from-emerald-950/30 via-[#10151d]/45 to-transparent" />
       </div>
 
-      <section className="app-surface relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] p-5 shadow-2xl shadow-black/25 sm:p-7 lg:p-9">
+      <section className="app-surface song-detail-surface relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] p-5 shadow-2xl shadow-black/25 sm:p-7 lg:p-9">
         <div className="mb-6 flex items-center justify-between text-white/90 md:hidden">
           <button type="button" onClick={() => history.back()} className="grid h-11 w-11 place-items-center rounded-full bg-white/8 text-slate-950 transition hover:bg-white/14 dark:text-white" aria-label="Quay lại">
             <ChevronDown size={30} />

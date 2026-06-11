@@ -102,6 +102,12 @@ html {
     inset 0 1px 0 rgb(255 255 255 / 0.95);
 }
 
+:root:not(.dark) .song-detail-surface {
+  box-shadow:
+    0 22px 48px rgb(15 47 53 / 0.10),
+    0 1px 0 rgb(255 255 255 / 0.95) inset !important;
+}
+
 .page-kicker {
   color: #34d399;
   font-size: 0.75rem;
