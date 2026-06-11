@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ChevronDown, Clock3, Disc3, ListPlus, Pause, Play, Repeat2, Shuffle, SkipBack, SkipForward } from "lucide-react";
+import { ChevronDown, Clock3, Disc3, ListPlus, Pause, Play, Repeat2, Shuffle } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { playlistApi } from "../../api/playlistApi";
@@ -62,18 +62,26 @@ export default function SongDetailPage() {
   const meta = [song.albumTitle || song.genreName, song.duration].filter(Boolean);
   const hasDescription = Boolean(song.description?.trim());
   const playerIconButton = "grid h-12 w-12 place-items-center rounded-full text-white/70 transition hover:scale-105 hover:text-white disabled:cursor-not-allowed disabled:text-white/35";
+  const skipIcon = (
+    <span className="flex items-center gap-1">
+      <span className="h-6 w-0.5 rounded-full bg-current" />
+      <Play size={22} fill="currentColor" strokeWidth={0} className="scale-x-[-1]" />
+    </span>
+  );
 
   return (
     <article className="relative -mx-4 overflow-hidden px-4 pb-8 pt-2 sm:mx-0 sm:px-0 md:pb-12">
-      <div
-        className="pointer-events-none absolute inset-x-[-12%] top-[-8rem] h-[32rem] opacity-45 blur-3xl"
-        style={{ backgroundImage: `url(${cover})`, backgroundSize: "cover", backgroundPosition: "center" }}
-      />
-      <div className="pointer-events-none absolute inset-x-[-12%] top-0 h-96 bg-gradient-to-b from-emerald-950/30 via-[#10151d]/45 to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 mx-auto hidden h-[28rem] max-w-7xl overflow-hidden rounded-[2.25rem] dark:block">
+        <div
+          className="absolute inset-x-[-12%] top-[-8rem] h-[32rem] opacity-45 blur-3xl"
+          style={{ backgroundImage: `url(${cover})`, backgroundSize: "cover", backgroundPosition: "center" }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-emerald-950/30 via-[#10151d]/45 to-transparent" />
+      </div>
 
       <section className="app-surface relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] p-5 shadow-2xl shadow-black/25 sm:p-7 lg:p-9">
         <div className="mb-6 flex items-center justify-between text-white/90 md:hidden">
-          <button type="button" onClick={() => history.back()} className="grid h-11 w-11 place-items-center rounded-full bg-white/8 transition hover:bg-white/14" aria-label="Quay lại">
+          <button type="button" onClick={() => history.back()} className="grid h-11 w-11 place-items-center rounded-full bg-white/8 text-slate-950 transition hover:bg-white/14 dark:text-white" aria-label="Quay lại">
             <ChevronDown size={30} />
           </button>
           <div className="min-w-0 px-4 text-center">
@@ -149,7 +157,7 @@ export default function SongDetailPage() {
                   <Shuffle size={25} />
                 </button>
                 <button type="button" className={playerIconButton} disabled={!canSkip} onClick={() => dispatch(previousSong())} aria-label="Bài trước">
-                  <SkipBack size={29} fill="currentColor" />
+                  {skipIcon}
                 </button>
                 <button
                   type="button"
@@ -160,7 +168,10 @@ export default function SongDetailPage() {
                   {isPlaying ? <Pause size={33} fill="currentColor" /> : <Play size={33} fill="currentColor" className="translate-x-0.5" />}
                 </button>
                 <button type="button" className={playerIconButton} disabled={!canSkip} onClick={() => dispatch(nextSong())} aria-label="Bài tiếp theo">
-                  <SkipForward size={29} fill="currentColor" />
+                  <span className="flex items-center gap-1">
+                    <Play size={22} fill="currentColor" strokeWidth={0} />
+                    <span className="h-6 w-0.5 rounded-full bg-current" />
+                  </span>
                 </button>
                 <button
                   type="button"
