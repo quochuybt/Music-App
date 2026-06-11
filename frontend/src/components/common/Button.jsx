@@ -11,7 +11,7 @@ export default function Button({ children, variant = "primary", className, ...pr
   return (
     <button
       data-variant={variant}
-      className={clsx("ui-button inline-flex h-10 items-center justify-center gap-2 rounded-xl px-4 text-sm font-semibold transition duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50", variants[variant], className)}
+      className={clsx("ui-button inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-xl px-4 text-sm font-semibold transition duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50", variants[variant], className)}
       {...props}
     >
       {children}
