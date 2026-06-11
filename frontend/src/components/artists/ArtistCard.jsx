@@ -9,7 +9,7 @@ export default function ArtistCard({ artist, scrollMobile = false }) {
         scrollMobile ? "w-64 shrink-0 sm:w-auto sm:shrink" : "w-full min-w-0"
       }`}
     >
-      <img src={artist.imageUrl || DEFAULT_IMAGE} alt={artist.name} className="mx-auto h-30 w-30 rounded-2xl object-cover ring-1 ring-white/10 transition duration-700 group-hover:scale-[1.03]" />
+      <img src={artist.imageUrl || DEFAULT_IMAGE} alt={artist.name} loading="lazy" decoding="async" className="mx-auto h-30 w-30 rounded-2xl object-cover ring-1 ring-white/10 transition duration-700 group-hover:scale-[1.03]" />
       <h3 className="mt-4 truncate font-semibold text-white">{artist.name}</h3>
     </Link>
   );

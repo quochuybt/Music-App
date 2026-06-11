@@ -22,7 +22,7 @@ export default function SongCard({ song, queue = [], compactMobile = false }) {
         className="group flex cursor-pointer items-center gap-3 rounded-2xl bg-white/[0.04] p-2 ring-1 ring-white/10 transition duration-300 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-emerald-300/70 sm:block sm:p-2"
       >
         <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-slate-900 sm:aspect-square sm:h-auto sm:w-full sm:rounded-[1rem]">
-          <img src={song.imageUrl || DEFAULT_IMAGE} alt={song.title} className="h-full w-full object-cover transition duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-105" />
+          <img src={song.imageUrl || DEFAULT_IMAGE} alt={song.title} loading="lazy" decoding="async" className="h-full w-full object-cover transition duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-105" />
           <div className="absolute inset-0 hidden bg-gradient-to-t from-black/72 via-black/10 to-transparent opacity-80 sm:block" />
           <div className="absolute bottom-3 right-3 hidden opacity-100 transition duration-300 sm:flex md:opacity-0 md:group-hover:opacity-100" onClick={stopActionClick}>
             <FavoriteButton songId={song.id} />
@@ -53,7 +53,7 @@ export default function SongCard({ song, queue = [], compactMobile = false }) {
       className="group cursor-pointer rounded-2xl bg-white/[0.04] p-2 ring-1 ring-white/10 transition duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-emerald-300/70"
     >
       <div className="relative aspect-square overflow-hidden rounded-[1rem] bg-slate-900">
-        <img src={song.imageUrl || DEFAULT_IMAGE} alt={song.title} className="h-full w-full object-cover transition duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-105" />
+        <img src={song.imageUrl || DEFAULT_IMAGE} alt={song.title} loading="lazy" decoding="async" className="h-full w-full object-cover transition duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-105" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/72 via-black/10 to-transparent opacity-80" />
         <div className="absolute bottom-3 right-3 flex opacity-100 transition duration-300 md:opacity-0 md:group-hover:opacity-100" onClick={stopActionClick}>
           <FavoriteButton songId={song.id} />

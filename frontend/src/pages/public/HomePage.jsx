@@ -44,7 +44,7 @@ export default function HomePage() {
           </div>
           <div className="hidden items-end justify-end md:flex">
             <div className="w-full max-w-sm rounded-[1.75rem] bg-white/[0.08] p-3 ring-1 ring-white/12">
-              <img src={heroSong?.imageUrl || "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80"} alt={heroSong?.title || "Ảnh nhạc nổi bật"} className="aspect-square w-full rounded-[1.25rem] object-cover" />
+              <img src={heroSong?.imageUrl || "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80"} alt={heroSong?.title || "Ảnh nhạc nổi bật"} decoding="async" fetchPriority="high" className="aspect-square w-full rounded-[1.25rem] object-cover" />
               <div className="p-4">
                 <p className="page-kicker">Đang nổi bật</p>
                 <h2 className="mt-2 truncate text-2xl font-bold text-white">{heroSong?.title || "Playlist buổi tối"}</h2>

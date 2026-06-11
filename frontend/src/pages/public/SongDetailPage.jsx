@@ -37,14 +37,30 @@ export default function SongDetailPage() {
   const [playlistOpen, setPlaylistOpen] = useState(false);
 
   useEffect(() => {
-    Promise.all([songApi.get(id), songApi.list({ size: 50 })])
-      .then(([songData, songPage]) => {
-        const songs = songPage.content || [];
+    let active = true;
+
+    songApi.get(id)
+      .then((songData) => {
+        if (!active) return;
         setSong(songData);
-        setDetailQueue(songs);
-        dispatch(setQueue(songs.length ? songs : [songData]));
         dispatch(setCurrentSong(songData));
+        dispatch(setQueue([songData]));
+
+        songApi.list({ size: 50 })
+          .then((songPage) => {
+            if (!active) return;
+            const songs = songPage.content || [];
+            setDetailQueue(songs);
+            dispatch(setQueue(songs.length ? songs : [songData]));
+          })
+          .catch(() => {
+            if (active) setDetailQueue([songData]);
+          });
       });
+
+    return () => {
+      active = false;
+    };
   }, [dispatch, id]);
 
   useEffect(() => {
@@ -99,7 +115,7 @@ export default function SongDetailPage() {
         <div className="grid gap-8 lg:grid-cols-[minmax(280px,430px)_1fr] lg:items-center">
           <div className="mx-auto w-full max-w-[23rem] sm:max-w-[27rem] lg:max-w-none">
             <div className="aspect-video overflow-hidden rounded-[1.35rem] bg-black shadow-[0_28px_90px_rgb(0_0_0_/_0.42)] ring-1 ring-white/10 sm:aspect-[16/10] lg:aspect-square">
-              <img src={cover} alt={`Bìa bài hát ${playingSong.title || song.title}`} className="h-full w-full object-cover" />
+              <img src={cover} alt={`Bìa bài hát ${playingSong.title || song.title}`} decoding="async" fetchPriority="high" className="h-full w-full object-cover" />
             </div>
           </div>
 
