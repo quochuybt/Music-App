@@ -5,7 +5,6 @@ import { useParams } from "react-router-dom";
 import { playlistApi } from "../../api/playlistApi";
 import { songApi } from "../../api/songApi";
 import Loading from "../../components/common/Loading";
-import Button from "../../components/common/Button";
 import AddToPlaylistModal from "../../components/playlist/AddToPlaylistModal";
 import FavoriteButton from "../../components/songs/FavoriteButton";
 import { nextSong, previousSong, seekToProgress, setCurrentSong, setQueue, togglePlay, toggleRepeatMode, toggleShuffle } from "../../features/player/playerSlice";
@@ -62,6 +61,7 @@ export default function SongDetailPage() {
   const canSkip = queue.length > 1 || detailQueue.length > 1;
   const meta = [song.albumTitle || song.genreName, song.duration].filter(Boolean);
   const hasDescription = Boolean(song.description?.trim());
+  const playerIconButton = "grid h-12 w-12 place-items-center rounded-full text-white/70 transition hover:scale-105 hover:text-white disabled:cursor-not-allowed disabled:text-white/35";
 
   return (
     <article className="relative -mx-4 overflow-hidden px-4 pb-8 pt-2 sm:mx-0 sm:px-0 md:pb-12">
@@ -142,15 +142,15 @@ export default function SongDetailPage() {
                 <button
                   type="button"
                   onClick={() => dispatch(toggleShuffle())}
-                  className={`transition hover:scale-105 ${shuffle ? "text-emerald-400" : "text-white/65 hover:text-white"}`}
+                  className={`${playerIconButton} ${shuffle ? "text-emerald-400 hover:text-emerald-300" : ""}`}
                   aria-label={shuffle ? "Tắt trộn bài" : "Trộn bài"}
                   aria-pressed={shuffle}
                 >
                   <Shuffle size={25} />
                 </button>
-                <Button variant="ghost" className="h-12 w-12 px-0 text-white/72" disabled={!canSkip} onClick={() => dispatch(previousSong())}>
+                <button type="button" className={playerIconButton} disabled={!canSkip} onClick={() => dispatch(previousSong())} aria-label="Bài trước">
                   <SkipBack size={29} fill="currentColor" />
-                </Button>
+                </button>
                 <button
                   type="button"
                   onClick={() => dispatch(togglePlay())}
@@ -159,13 +159,13 @@ export default function SongDetailPage() {
                 >
                   {isPlaying ? <Pause size={33} fill="currentColor" /> : <Play size={33} fill="currentColor" className="translate-x-0.5" />}
                 </button>
-                <Button variant="ghost" className="h-12 w-12 px-0 text-white/72" disabled={!canSkip} onClick={() => dispatch(nextSong())}>
+                <button type="button" className={playerIconButton} disabled={!canSkip} onClick={() => dispatch(nextSong())} aria-label="Bài tiếp theo">
                   <SkipForward size={29} fill="currentColor" />
-                </Button>
+                </button>
                 <button
                   type="button"
                   onClick={() => dispatch(toggleRepeatMode())}
-                  className={`relative transition hover:scale-105 ${repeatMode !== "off" ? "text-emerald-400" : "text-white/65 hover:text-white"}`}
+                  className={`relative ${playerIconButton} ${repeatMode !== "off" ? "text-emerald-400 hover:text-emerald-300" : ""}`}
                   aria-label={repeatMode === "one" ? "Lặp lại một bài" : repeatMode === "all" ? "Lặp lại danh sách" : "Bật lặp lại"}
                   aria-pressed={repeatMode !== "off"}
                 >
