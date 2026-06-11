@@ -2,7 +2,7 @@ import { Pause, Play, SkipBack, SkipForward, Volume2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { audioFailed, nextSong, previousSong, setProgress, setVolume, togglePlay } from "../../features/player/playerSlice";
+import { audioFailed, nextSong, previousSong, seekToProgress, setProgress, setVolume, togglePlay } from "../../features/player/playerSlice";
 import { DEFAULT_IMAGE } from "../../utils/constants";
 import Button from "../common/Button";
 
@@ -10,7 +10,7 @@ export default function MusicPlayer() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const { currentSong, isPlaying, progress, volume, queue, currentIndex } = useSelector((state) => state.player);
+  const { currentSong, isPlaying, progress, seekRequest, volume, queue, currentIndex, repeatMode } = useSelector((state) => state.player);
   const audioRef = useRef(null);
   const [audioError, setAudioError] = useState("");
   const isSongDetail = /^\/songs\/[^/]+$/.test(location.pathname);
@@ -35,6 +35,12 @@ export default function MusicPlayer() {
     }
   }, [currentSong?.audioUrl, isPlaying]);
 
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio || !seekRequest || !audio.duration || !Number.isFinite(audio.duration)) return;
+    audio.currentTime = (Number(seekRequest.progress) / 100) * audio.duration;
+  }, [seekRequest]);
+
   const playLoadedAudio = () => {
     const audio = audioRef.current;
     if (!audio || !isPlaying) return;
@@ -53,7 +59,7 @@ export default function MusicPlayer() {
     if (audio?.duration && Number.isFinite(audio.duration)) {
       audio.currentTime = (nextProgress / 100) * audio.duration;
     }
-    dispatch(setProgress(nextProgress));
+    dispatch(seekToProgress(nextProgress));
   };
 
   const handleAudioError = () => {
@@ -79,6 +85,16 @@ export default function MusicPlayer() {
     syncDetailRoute(previous);
   };
 
+  const handleEnded = () => {
+    const audio = audioRef.current;
+    if (repeatMode === "one" && audio) {
+      audio.currentTime = 0;
+      audio.play().catch(() => dispatch(audioFailed()));
+      return;
+    }
+    handleNextSong();
+  };
+
   const openCurrentSongDetail = () => {
     if (currentSong?.id) navigate(`/songs/${currentSong.id}`);
   };
@@ -95,7 +111,7 @@ export default function MusicPlayer() {
           preload="metadata"
           onCanPlay={playLoadedAudio}
           onTimeUpdate={handleTimeUpdate}
-          onEnded={handleNextSong}
+          onEnded={handleEnded}
           onError={handleAudioError}
         />
       )}

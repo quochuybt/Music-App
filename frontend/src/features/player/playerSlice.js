@@ -26,7 +26,10 @@ const playerSlice = createSlice({
     isPlaying: false,
     volume: storage.getItem("playerVolume", 70),
     progress: 0,
+    seekRequest: null,
     currentIndex: 0,
+    shuffle: false,
+    repeatMode: "off",
   },
   reducers: {
     setCurrentSong(state, action) {
@@ -51,7 +54,15 @@ const playerSlice = createSlice({
     },
     nextSong(state) {
       if (!state.queue.length) return;
-      state.currentIndex = (state.currentIndex + 1) % state.queue.length;
+      if (state.shuffle && state.queue.length > 1) {
+        let nextIndex = state.currentIndex;
+        while (nextIndex === state.currentIndex) {
+          nextIndex = Math.floor(Math.random() * state.queue.length);
+        }
+        state.currentIndex = nextIndex;
+      } else {
+        state.currentIndex = (state.currentIndex + 1) % state.queue.length;
+      }
       state.currentSong = normalizeSong(state.queue[state.currentIndex]);
       state.isPlaying = true;
       state.progress = 0;
@@ -69,6 +80,16 @@ const playerSlice = createSlice({
     },
     setProgress(state, action) {
       state.progress = action.payload;
+    },
+    seekToProgress(state, action) {
+      state.progress = action.payload;
+      state.seekRequest = { progress: action.payload, requestedAt: Date.now() };
+    },
+    toggleShuffle(state) {
+      state.shuffle = !state.shuffle;
+    },
+    toggleRepeatMode(state) {
+      state.repeatMode = state.repeatMode === "off" ? "all" : state.repeatMode === "all" ? "one" : "off";
     },
     setQueue(state, action) {
       state.queue = action.payload || [];
@@ -91,6 +112,6 @@ const playerSlice = createSlice({
   },
 });
 
-export const { setCurrentSong, playSong, pauseSong, audioFailed, togglePlay, nextSong, previousSong, setVolume, setProgress, setQueue, clearPlayer } =
+export const { setCurrentSong, playSong, pauseSong, audioFailed, togglePlay, nextSong, previousSong, setVolume, setProgress, seekToProgress, toggleShuffle, toggleRepeatMode, setQueue, clearPlayer } =
   playerSlice.actions;
 export default playerSlice.reducer;

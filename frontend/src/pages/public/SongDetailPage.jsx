@@ -8,7 +8,7 @@ import Loading from "../../components/common/Loading";
 import Button from "../../components/common/Button";
 import AddToPlaylistModal from "../../components/playlist/AddToPlaylistModal";
 import FavoriteButton from "../../components/songs/FavoriteButton";
-import { nextSong, previousSong, setCurrentSong, setProgress, setQueue, togglePlay } from "../../features/player/playerSlice";
+import { nextSong, previousSong, seekToProgress, setCurrentSong, setQueue, togglePlay, toggleRepeatMode, toggleShuffle } from "../../features/player/playerSlice";
 import { useAuth } from "../../hooks/useAuth";
 import { DEFAULT_IMAGE } from "../../utils/constants";
 
@@ -31,7 +31,7 @@ export default function SongDetailPage() {
   const { id } = useParams();
   const dispatch = useDispatch();
   const { isAuthenticated } = useAuth();
-  const { currentSong, isPlaying, progress, queue } = useSelector((state) => state.player);
+  const { currentSong, isPlaying, progress, queue, repeatMode, shuffle } = useSelector((state) => state.player);
   const [song, setSong] = useState(null);
   const [detailQueue, setDetailQueue] = useState([]);
   const [playlists, setPlaylists] = useState([]);
@@ -81,9 +81,9 @@ export default function SongDetailPage() {
             <p className="truncate text-sm font-semibold">{playingSong.artistName || song.artistName}</p>
           </div>
           <div className="flex items-center gap-2">
-            <FavoriteButton songId={song.id} size="sm" />
-            <button type="button" onClick={() => setPlaylistOpen(true)} className="grid h-9 w-9 place-items-center rounded-full bg-white/8 text-white transition hover:bg-white/14" aria-label="Thêm vào playlist">
-              <ListPlus size={19} />
+            <FavoriteButton songId={song.id} />
+            <button type="button" onClick={() => setPlaylistOpen(true)} className="grid h-11 w-11 place-items-center rounded-full bg-white/8 text-white transition hover:bg-white/14" aria-label="Thêm vào playlist">
+              <ListPlus size={24} />
             </button>
           </div>
         </div>
@@ -107,19 +107,20 @@ export default function SongDetailPage() {
             <p className="mt-4 text-xl font-extrabold text-slate-200">{playingSong.artistName || song.artistName}</p>
             {hasDescription && <p className="mt-2 max-w-2xl text-base leading-7 text-slate-400">{song.description}</p>}
 
-            <div className="mt-6 flex flex-wrap items-center gap-3 text-sm font-semibold text-slate-200">
+            <div className="mt-6 hidden items-center gap-3 md:flex">
+              <FavoriteButton songId={song.id} size="lg" />
+              <button type="button" onClick={() => setPlaylistOpen(true)} className="grid h-12 w-12 place-items-center rounded-full bg-white/8 text-white/80 ring-1 ring-white/10 transition hover:bg-white/12 hover:text-white" aria-label="Thêm vào playlist">
+                <ListPlus size={26} />
+              </button>
+            </div>
+
+            <div className="mt-5 flex flex-wrap items-center gap-3 text-sm font-semibold text-slate-200">
               {meta.map((item) => (
                 <span key={item} className="inline-flex items-center gap-2 rounded-full bg-white/8 px-4 py-2 ring-1 ring-white/10">
                   {item === song.duration ? <Clock3 size={17} className="text-emerald-300" /> : <Disc3 size={17} className="text-emerald-300" />}
                   {item}
                 </span>
               ))}
-              <div className="hidden items-center gap-2 md:flex">
-                <FavoriteButton songId={song.id} />
-                <button type="button" onClick={() => setPlaylistOpen(true)} className="grid h-11 w-11 place-items-center rounded-full bg-white/8 text-white/80 ring-1 ring-white/10 transition hover:bg-white/12 hover:text-white" aria-label="Thêm vào playlist">
-                  <ListPlus size={21} />
-                </button>
-              </div>
             </div>
 
             <div className="mt-8 rounded-[1.5rem] border border-white/10 bg-[#05080c]/82 p-4 shadow-2xl shadow-black/25 sm:p-5">
@@ -129,7 +130,7 @@ export default function SongDetailPage() {
                 min="0"
                 max="100"
                 value={progress}
-                onChange={(event) => dispatch(setProgress(Number(event.target.value)))}
+                onChange={(event) => dispatch(seekToProgress(Number(event.target.value)))}
               />
               <div className="mt-2 flex justify-between text-xs font-semibold text-slate-500">
                 <span>{formatSeconds(elapsed)}</span>
@@ -137,7 +138,13 @@ export default function SongDetailPage() {
               </div>
 
               <div className="mt-5 flex items-center justify-between">
-                <button type="button" className="text-emerald-400 transition hover:scale-105" aria-label="Trộn bài">
+                <button
+                  type="button"
+                  onClick={() => dispatch(toggleShuffle())}
+                  className={`transition hover:scale-105 ${shuffle ? "text-emerald-400" : "text-white/65 hover:text-white"}`}
+                  aria-label={shuffle ? "Tắt trộn bài" : "Trộn bài"}
+                  aria-pressed={shuffle}
+                >
                   <Shuffle size={25} />
                 </button>
                 <Button variant="ghost" className="h-12 w-12 px-0 text-white/72" disabled={!canSkip} onClick={() => dispatch(previousSong())}>
@@ -154,8 +161,15 @@ export default function SongDetailPage() {
                 <Button variant="ghost" className="h-12 w-12 px-0 text-white/72" disabled={!canSkip} onClick={() => dispatch(nextSong())}>
                   <SkipForward size={29} fill="currentColor" />
                 </Button>
-                <button type="button" className="text-white/65 transition hover:scale-105 hover:text-white" aria-label="Lặp lại">
+                <button
+                  type="button"
+                  onClick={() => dispatch(toggleRepeatMode())}
+                  className={`relative transition hover:scale-105 ${repeatMode !== "off" ? "text-emerald-400" : "text-white/65 hover:text-white"}`}
+                  aria-label={repeatMode === "one" ? "Lặp lại một bài" : repeatMode === "all" ? "Lặp lại danh sách" : "Bật lặp lại"}
+                  aria-pressed={repeatMode !== "off"}
+                >
                   <Repeat2 size={25} />
+                  {repeatMode === "one" && <span className="absolute -right-1 -top-1 grid h-4 w-4 place-items-center rounded-full bg-emerald-400 text-[0.62rem] font-black text-black">1</span>}
                 </button>
               </div>
             </div>
