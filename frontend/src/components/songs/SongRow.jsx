@@ -1,5 +1,6 @@
 import { ListPlus } from "lucide-react";
 import { DEFAULT_IMAGE } from "../../utils/constants";
+import { fallbackToOriginalImage, getDisplayImageUrl } from "../../utils/imageUrl";
 import { usePlayer } from "../../hooks/usePlayer";
 import Button from "../common/Button";
 import FavoriteButton from "./FavoriteButton";
@@ -8,6 +9,8 @@ export default function SongRow({ song, queue = [], onAddToPlaylist, onRemove, s
   const { play } = usePlayer();
   const playSong = () => play(song, queue);
   const stopActionClick = (event) => event.stopPropagation();
+  const cover = song.imageUrl || DEFAULT_IMAGE;
+  const displayCover = getDisplayImageUrl(cover);
 
   return (
     <div
@@ -22,7 +25,7 @@ export default function SongRow({ song, queue = [], onAddToPlaylist, onRemove, s
       }}
       className="group grid cursor-pointer grid-cols-[auto_minmax(0,1fr)_96px] items-center gap-3 rounded-2xl bg-white/[0.04] p-3 ring-1 ring-white/10 transition duration-300 hover:-translate-y-0.5 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-emerald-300/70 md:grid-cols-[auto_minmax(0,1.5fr)_minmax(0,1fr)_minmax(0,1fr)_96px]"
     >
-      <img src={song.imageUrl || DEFAULT_IMAGE} alt={song.title} loading="lazy" decoding="async" className="h-13 w-13 rounded-xl object-cover ring-1 ring-white/10" />
+      <img src={displayCover} onError={(event) => fallbackToOriginalImage(event, cover)} alt={song.title} loading="lazy" decoding="async" className="h-13 w-13 rounded-xl object-cover ring-1 ring-white/10" />
       <div className="min-w-0">
         <p className="truncate font-semibold text-white transition group-hover:text-emerald-200">{song.title}</p>
         <p className="truncate text-sm text-slate-400 md:hidden">{song.artistName}</p>

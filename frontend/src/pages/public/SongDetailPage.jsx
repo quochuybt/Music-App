@@ -10,6 +10,7 @@ import FavoriteButton from "../../components/songs/FavoriteButton";
 import { nextSong, previousSong, seekToProgress, setCurrentSong, setQueue, togglePlay, toggleRepeatMode, toggleShuffle } from "../../features/player/playerSlice";
 import { useAuth } from "../../hooks/useAuth";
 import { DEFAULT_IMAGE } from "../../utils/constants";
+import { fallbackToOriginalImage, getDisplayImageUrl } from "../../utils/imageUrl";
 
 const parseDuration = (duration = "") => {
   const parts = duration.split(":").map(Number);
@@ -72,6 +73,7 @@ export default function SongDetailPage() {
 
   const playingSong = currentSong || song;
   const cover = playingSong.imageUrl || song.imageUrl || DEFAULT_IMAGE;
+  const displayCover = getDisplayImageUrl(cover);
   const durationSeconds = parseDuration(playingSong.duration || song.duration);
   const elapsed = durationSeconds * (Number(progress) / 100);
   const canSkip = queue.length > 1 || detailQueue.length > 1;
@@ -90,7 +92,7 @@ export default function SongDetailPage() {
       <div className="pointer-events-none absolute inset-x-0 top-0 mx-auto hidden h-[28rem] max-w-7xl overflow-hidden rounded-[2.25rem] dark:block">
         <div
           className="absolute inset-x-[-12%] top-[-8rem] h-[32rem] opacity-45 blur-3xl"
-          style={{ backgroundImage: `url(${cover})`, backgroundSize: "cover", backgroundPosition: "center" }}
+          style={{ backgroundImage: `url(${displayCover})`, backgroundSize: "cover", backgroundPosition: "center" }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-emerald-950/30 via-[#10151d]/45 to-transparent" />
       </div>
@@ -115,7 +117,7 @@ export default function SongDetailPage() {
         <div className="grid gap-8 lg:grid-cols-[minmax(280px,430px)_1fr] lg:items-center">
           <div className="mx-auto w-full max-w-[23rem] sm:max-w-[27rem] lg:max-w-none">
             <div className="aspect-video overflow-hidden rounded-[1.35rem] bg-black shadow-[0_28px_90px_rgb(0_0_0_/_0.42)] ring-1 ring-white/10 sm:aspect-[16/10] lg:aspect-square">
-              <img src={cover} alt={`Bìa bài hát ${playingSong.title || song.title}`} decoding="async" fetchPriority="high" className="h-full w-full object-cover" />
+              <img src={displayCover} onError={(event) => fallbackToOriginalImage(event, cover)} alt={`Bìa bài hát ${playingSong.title || song.title}`} decoding="async" fetchPriority="high" className="h-full w-full object-cover" />
             </div>
           </div>
 

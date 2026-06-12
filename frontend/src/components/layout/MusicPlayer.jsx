@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { audioFailed, nextSong, previousSong, seekToProgress, setProgress, setVolume, togglePlay } from "../../features/player/playerSlice";
 import { DEFAULT_IMAGE } from "../../utils/constants";
+import { fallbackToOriginalImage, getDisplayImageUrl } from "../../utils/imageUrl";
 import Button from "../common/Button";
 
 export default function MusicPlayer() {
@@ -88,7 +89,7 @@ export default function MusicPlayer() {
   useEffect(() => {
     if (!currentSong || !("mediaSession" in navigator) || !window.MediaMetadata) return;
 
-    const artworkSrc = currentSong.imageUrl || DEFAULT_IMAGE;
+    const artworkSrc = getDisplayImageUrl(currentSong.imageUrl || DEFAULT_IMAGE);
     navigator.mediaSession.metadata = new window.MediaMetadata({
       title: currentSong.title || "VietMusic",
       artist: currentSong.artistName || "",
@@ -144,6 +145,8 @@ export default function MusicPlayer() {
 
   if (!currentSong) return null;
   const hasAudio = Boolean(currentSong.audioUrl);
+  const cover = currentSong.imageUrl || DEFAULT_IMAGE;
+  const displayCover = getDisplayImageUrl(cover);
 
   return (
     <>
@@ -167,7 +170,7 @@ export default function MusicPlayer() {
           className="flex min-w-0 items-center gap-3 rounded-2xl text-left transition hover:bg-white/[0.04] focus:outline-none focus:ring-2 focus:ring-emerald-300/70"
           title="Mở trang chi tiết bài hát"
         >
-          <img src={currentSong.imageUrl || DEFAULT_IMAGE} alt={currentSong.title || "Ảnh bài hát"} className="h-13 w-13 rounded-2xl object-cover ring-1 ring-white/10" />
+          <img src={displayCover} onError={(event) => fallbackToOriginalImage(event, cover)} alt={currentSong.title || "Ảnh bài hát"} className="h-13 w-13 rounded-2xl object-cover ring-1 ring-white/10" />
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold text-white">{currentSong.title || "Chọn một bài hát"}</p>
             <p className="truncate text-xs text-slate-400">{audioError || (hasAudio ? currentSong.artistName : "Bài hát này chưa có file audio")}</p>
